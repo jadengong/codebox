@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
-const apiRoutes = require('./route/api'); // import API routes
+const apiRoutes = require('./routes/api'); // import API routes
 
 // Load env variables from .env file
 dotenv.config();
