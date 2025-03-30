@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
+const apiRoutes = require('./route/api'); // import API routes
 
 // Load env variables from .env file
 dotenv.config();
@@ -13,6 +14,9 @@ app.use(cors());
 
 // To parse incoming JSON requests
 app.use(express.json());
+
+// Use imported API routes for handling those requests
+app.use('/api', apiRoutes); // All API routes start with '/api'
 
 // Define router handler for GET requests at root URL "/"
 app.get('/', (req, res) => {
