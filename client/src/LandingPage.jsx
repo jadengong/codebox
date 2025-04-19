@@ -8,10 +8,10 @@ function LandingPage() {
     const navigate = useNavigate();
 
     const handleStart = () => {
-        if(username.trim()){
-            navigate('/sandbox', { state: { username } });
-        }
+        const nameToUse = username.trim() || 'Guest';
+        navigate('/sandbox', { state: { username: nameToUse } });
     };
+
 
     return (
         <div className="landing-container">

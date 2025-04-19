@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../config/db') // import pool instance from db.js
 
 // Handle GET request
 router.get('/', (req, res) => {
@@ -14,7 +13,7 @@ router.post('/execute', async (req, res) => {
   if (code) {
     try {
       // Simulating code execution (replace with real code execution logic)
-      const result = 'Executed code: ${code}'; // Placeholder
+      const result = `Executed code: ${code}`; // Placeholder
 
       // Insert code and its result into database
       const query = 'INSERT INTO executions (code, result) VALUES ($1, $2) RETURNING *';
