@@ -1,4 +1,3 @@
-// Sandbox.jsx
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -6,7 +5,7 @@ function Sandbox() {
   const location = useLocation();
   const username = location.state?.username || 'Guest';
 
-  // your existing state
+  // existing state
   const [language, setLanguage] = useState('python');
   const [code, setCode] = useState('');
   const [output, setOutput] = useState('');
