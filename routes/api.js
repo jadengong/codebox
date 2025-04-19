@@ -1,37 +1,32 @@
 const express = require('express');
 const router = express.Router();
 
-// Handle GET request
+// Handle GET request to test API
 router.get('/', (req, res) => {
   res.json({ message: 'Welcome to the code execution sandbox API!' });
 });
 
-// Handle POST request
+// Handle POST /api/execute
 router.post('/execute', async (req, res) => {
-  const { code } = req.body;
+  const { code, language } = req.body;
 
   if (code) {
     try {
-      // Simulating code execution (replace with real code execution logic)
-      const result = `Executed code: ${code}`; // Placeholder
-
-      // Insert code and its result into database
-      const query = 'INSERT INTO executions (code, result) VALUES ($1, $2) RETURNING *';
-      const values = [code, result];
-      const dbResult = await pool.query(query, values);
+      // Simulate code execution (placeholder)
+      const result = `Executed code: ${code}`;
 
       res.json({
         message: 'Code execution started.',
         code,
-        result,
-        execution_id: dbResult.rows[0].id, // Return execution ID from database
+        language,
+        result
       });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Internal server error'});
-    } 
+      res.status(500).json({ error: 'Internal server error' });
+    }
   } else {
-    res.status(400).json({ error: 'No code provided.'});
+    res.status(400).json({ error: 'No code provided.' });
   }
 });
 
