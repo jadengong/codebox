@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../db') // import pool instance from db.js
+const pool = require('../config/db') // import pool instance from db.js
 
 // Handle GET request
 router.get('/', (req, res) => {
