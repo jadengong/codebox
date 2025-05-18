@@ -1,5 +1,7 @@
 const express = require('express');
+const { runCodeInDocker } = require('../codeExecution');
 const router = express.Router();
+
 
 // Handle GET request to test API
 router.get('/', (req, res) => {
@@ -13,7 +15,7 @@ router.post('/execute', async (req, res) => {
   if (code) {
     try {
       // Simulate code execution (placeholder)
-      const result = `Executed code: ${code}`;
+      const result = await runCodeInDocker(code, language);
 
       res.json({
         message: 'Code execution started.',
