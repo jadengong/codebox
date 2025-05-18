@@ -1,39 +1,64 @@
-const fs = require('fs')
-const path = require('path')
-const { exec } = require('child_process')
-const { v4: uuid } = require('uuid')
+const fs = require('fs');
+const path = require('path');
+const { exec } = require('child_process');
+const { v4: uuid } = require('uuid');
 
-async function runCodeInDocker(code, language) {
-    const id = uuid()
-    const tempDir = path.join(__dirname, 'temp')
-    const filename = `${id}.${language === 'python' ? 'py' : 'js'}`
-    const filepath = path.join(tempDir, filename)
+const tempDir = path.join(__dirname, 'temp');
 
-    // Ensure that the temp folder exists
-    if(!fs.existsSync(tempDir)){
-        fs.mkdirSync(tempDir)
-    }
-
-    // Write code to file
-    fs.writeFileSync(filepath, code)
-
-    // Pick image and command based on language
-    const image = language === 'python' ? 'python:3.11' : 'node:20'
-    const runCmd = language === 'python'
-    ? `python /app/${filename}`
-    : `node /app/${filename}`
-
-    return new Promise((resolve, reject) => { 
-        exec(
-            `docker run --rm -v ${filepath}:/app/${filename} ${image} ${runCmd}`,
-        (error, stdout, stderr) => {
-        if (error) {
-            return resolve(stderr || error.message);
-        }
-        resolve(stdout)
-        }
-        )
-    })
+if (!fs.existsSync(tempDir)) {
+  fs.mkdirSync(tempDir);
 }
 
-module.exports = { runCodeInDocker }
+// Language config map
+const languageConfigs = {
+    python: {
+        ext: 'py',
+        image: 'python:3.11',
+        run: (filename) => `python /app/${filename}`
+    },
+    javascript: {
+        ext: 'js',
+        image: 'node:20',
+        run: (filename) => `node /app/${filename}`
+    },
+    java: {
+        ext: 'java',
+        image: 'openjdk:17',
+        run: (filename) => `sh -c "javac /app/${filename} && java -cp /app Main"`
+    },
+    cpp: {
+        ext: 'cpp',
+        image: 'gcc:13',
+        run: (filename) => `sh -c "g++ /app/${filename} -o /app/a.out && /app/a.out"`
+    }
+};
+
+async function runCodeInDocker(code, language) {
+    const config = languageConfigs[language];
+
+    if (!config) {
+        throw new Error(`Unsupported language: ${language}`);
+    }
+
+    const id = uuid();
+    const filename = `${id}.${config.ext}`;
+    const filepath = path.join(tempDir, filename);
+
+    fs.writeFileSync(filepath, code);
+
+    const runCmd = config.run(filename);
+    const dockerCmd = `docker run --rm -v ${filepath}:/app/${filename} ${config.image} ${runCmd}`;
+
+    console.log(`[Docker] Running command: ${dockerCmd}`);
+
+    return new Promise((resolve) => {
+        exec(dockerCmd, (error, stdout, stderr) => {
+            if (error) {
+                return resolve(stderr || error.message);
+            }
+            resolve(stdout);
+        });
+    });
+}
+
+module.exports = { runCodeInDocker };
