@@ -44,6 +44,29 @@ async function runCodeInDocker(code, language) {
     const filename = `${id}.${config.ext}`;
     const filepath = path.join(tempDir, filename);
 
+    // Auto-wrapping snippets for Java and C++
+    if (language === 'cpp') {
+        code = `
+    #include <iostream>
+    using namespace std;
+
+    int main() {
+        ${code}
+    return 0;
+}
+    `.trim();
+}
+
+    if (language === 'java') {
+        code = `
+    public class Main {
+        public static void main(String[] args) {
+            ${code}
+    }
+}
+        `.trim();
+}
+
     fs.writeFileSync(filepath, code);
 
     const runCmd = config.run(filename);
@@ -53,6 +76,13 @@ async function runCodeInDocker(code, language) {
 
     return new Promise((resolve) => {
         exec(dockerCmd, (error, stdout, stderr) => {
+            // Try to clean temp file
+            try {
+                fs.unlinkSync(filepath);
+            } catch (cleanupErr) {
+                console.warn(`[Cleanup] Failed to delete ${filepath}:`, cleanupErr.message);
+            }
+
             if (error) {
                 return resolve(stderr || error.message);
             }
