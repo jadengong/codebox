@@ -6,7 +6,7 @@ const { v4: uuid } = require('uuid');
 const tempDir = path.join(__dirname, 'temp');
 
 if (!fs.existsSync(tempDir)) {
-  fs.mkdirSync(tempDir);
+    fs.mkdirSync(tempDir);
 }
 
 // Language config map
@@ -34,6 +34,20 @@ const languageConfigs = {
 };
 
 async function runCodeInDocker(code, language) {
+
+    // Language alias map
+    const languageMap = {
+        'c++': 'cpp',
+        'cpp': 'cpp',
+        'javascript': 'javascript',
+        'js': 'javascript',
+        'java': 'java',
+        'python': 'python',
+        'py': 'python'
+    };
+
+    language = languageMap[language.toLowerCase()] || language;
+
     const config = languageConfigs[language];
 
     if (!config) {
