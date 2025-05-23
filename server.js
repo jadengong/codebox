@@ -6,7 +6,7 @@ const apiRoutes = require('./routes/api'); // import API routes
 // Load env variables from .env file
 dotenv.config();
 
-const app = express(); // Create Express application
+const app = express(); 
 const port = process.env.PORT || 3000; // Set port from environment or default 
 
 // To allow cross-origin requests
@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 // Use imported API routes for handling those requests
-app.use('/api', apiRoutes); // All API routes start with '/api'
+app.use('/api', apiRoutes); 
 
 // Define router handler for GET requests at root URL "/"
 app.get('/', (req, res) => {
