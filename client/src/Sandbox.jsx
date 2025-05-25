@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 function Sandbox() {
-  const location = useLocation();
-  const username = location.state?.username || 'Guest';
+  const greeting = "Hello, and welcome to the Code Sandbox! 👋";
 
   const [language, setLanguage] = useState('python');
   const [code, setCode] = useState('');
@@ -34,7 +33,7 @@ function Sandbox() {
 
   return (
     <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h1>Welcome, {username} 👨‍💻</h1>
+      <h1> {greeting} 👨‍💻</h1>
 
       <label>
         Language:
