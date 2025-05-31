@@ -43,3 +43,65 @@
     background-color: #2a2a2a;
     color: #f0f0f0;
 }
+
+/* styling dropdown */
+
+.select {
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: inherit;
+    color: inherit;
+}
+
+.darkSelect {
+    border-color: #555;
+}
+
+
+/* styling run button */
+
+.runButton {
+    padding: 0.6rem 1.2rem;
+    font-weight: bold;
+    background-color: #007acc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.runButton:hover {
+    background-color: #005fa3;
+}
+
+/* style the text area */
+
+.textarea {
+    font-family: monospace;
+    padding: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: #ffffff;
+    color: #000000;
+    outline: none;
+}
+
+.darkTextArea {
+    background-color: #2d2d2d;
+    border-color: #555;
+    color: #f0f0f0;
+}
+
+.textarea:focus {
+    border-color: #007acc;
+    box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.4);
+}
+
+/* transition to output box */
+.output {
+    transition: all 0.2s ease-in-out;
+}
+
+
