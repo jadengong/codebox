@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import styles from './Sandbox.module.css';
 
 function Sandbox() {
   const greeting = "Hello, and welcome to the Code Sandbox! 👋";
@@ -7,8 +7,15 @@ function Sandbox() {
   const [language, setLanguage] = useState('python');
   const [code, setCode] = useState('');
   const [output, setOutput] = useState('');
+  const [theme, setTheme] = useState('light');
+
+  const toggleTheme = async () => {
+    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+  }
 
   const handleRun = async () => {
+    setOutput('Running...') // Clear output immediately
+
     try {
       const response = await fetch('http://localhost:3000/api/execute', {
         method: 'POST',
@@ -32,8 +39,12 @@ function Sandbox() {
   };
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
+    <div className={`${styles.container} ${styles[theme]}`}>
       <h1> {greeting} 👨‍💻</h1>
+
+    <button onClick={toggleTheme} style={{ marginBottom: '1rem' }}>
+    Switch to {theme === 'dark' ? 'Light' : 'Dark'} Mode
+    </button>
 
       <label>
         Language:
@@ -52,7 +63,7 @@ function Sandbox() {
           placeholder="Write your code here..."
           rows={10}
           cols={60}
-          style={{ fontFamily: 'monospace', padding: '1rem' }}
+          className={`${styles.textarea} ${theme === 'dark' ? styles.darkTextArea : ''}`}
         />
       </div>
 
@@ -61,7 +72,7 @@ function Sandbox() {
       </div>
 
       {output && (
-        <div style={{ marginTop: '2rem', backgroundColor: '#f0f0f0', padding: '1rem', borderRadius: '8px' }}>
+        <div className={`${styles.output} ${theme === 'dark' ? styles.darkOutput : ''}`}>
           <h3>Output:</h3>
           <pre>{output}</pre>
         </div>
