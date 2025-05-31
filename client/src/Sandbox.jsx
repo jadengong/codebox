@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styles from './Sandbox.module.css';
+import { Sun, Moon} from 'lucide-react';
 
 function Sandbox() {
   const greeting = "Hello, and welcome to the Code Sandbox! 👋";
@@ -40,22 +41,38 @@ function Sandbox() {
 
   return (
     <div className={`${styles.container} ${styles[theme]}`}>
-      <h1> {greeting} 👨‍💻</h1>
 
-    <button onClick={toggleTheme} style={{ marginBottom: '1rem' }}>
-    Switch to {theme === 'dark' ? 'Light' : 'Dark'} Mode
-    </button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <h1>{greeting} 👨‍💻</h1>
+  
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'inherit',
+              fontSize: '1.5rem',
+            }}
+          >
+            {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
+          </button>
+    </div>
 
-      <label>
-        Language:
-        <select value={language} onChange={(e) => setLanguage(e.target.value)} style={{ marginLeft: '0.5rem' }}>
-          <option value="python">Python</option>
-          <option value="javascript">JavaScript</option>
-          <option value="java">Java</option>
-          <option value="c++">C++</option>
-        </select>
-      </label>
 
+
+        <label>
+          Language:
+          <select value={language} onChange={(e) => setLanguage(e.target.value)} style={{ marginLeft: '0.5rem' }}>
+            <option value="python">Python</option>
+            <option value="javascript">JavaScript</option>
+            <option value="java">Java</option>
+            <option value="c++">C++</option>
+          </select>
+        </label>
+
+  
       <div style={{ marginTop: '1rem' }}>
         <textarea
           value={code}
