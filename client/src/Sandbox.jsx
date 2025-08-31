@@ -70,13 +70,20 @@ cout << "Sum of 1 to 10: " << sum << endl;`
 
   const checkBackendConnection = async () => {
     try {
+      console.log('[Frontend] Checking backend connection...');
       const response = await fetch('http://localhost:3000/api/health');
+      console.log('[Frontend] Backend response:', response.status, response.ok);
+      
       if (response.ok) {
+        const data = await response.json();
+        console.log('[Frontend] Backend data:', data);
         setConnectionStatus('connected');
       } else {
+        console.log('[Frontend] Backend error status:', response.status);
         setConnectionStatus('error');
       }
     } catch (err) {
+      console.error('[Frontend] Connection error:', err);
       setConnectionStatus('disconnected');
     }
   };
@@ -109,6 +116,7 @@ cout << "Sum of 1 to 10: " << sum << endl;`
     setOutput('Running...');
 
     try {
+      console.log('[Frontend] Executing code:', { language, codeLength: code.trim().length });
       const response = await fetch('http://localhost:3000/api/execute', {
         method: 'POST',
         headers: {
@@ -118,6 +126,7 @@ cout << "Sum of 1 to 10: " << sum << endl;`
       });
 
       const data = await response.json();
+      console.log('[Frontend] Execute response:', response.status, data);
 
       if (response.ok) {
         setOutput(data.result || 'Code executed successfully with no output.');
@@ -128,7 +137,7 @@ cout << "Sum of 1 to 10: " << sum << endl;`
         setHasError(true);
       }
     } catch (err) {
-      console.error(err);
+      console.error('[Frontend] Execute error:', err);
       setOutput('Failed to connect to backend. Please make sure the server is running.');
       setHasError(true);
       setConnectionStatus('disconnected');
