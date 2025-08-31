@@ -42,6 +42,12 @@ Users can write code in the browser, select a language, and get real-time output
 
 ## Setup Instructions
 
+### Prerequisites
+
+- **Node.js** (v16 or higher)
+- **Docker** (must be running)
+- **Python** (v3.8 or higher, for optional Python backend)
+
 ### 1. Clone the repo
 
 ```bash
@@ -66,7 +72,22 @@ cd client
 npm install
 ```
 
-### 4. Start the backend and frontend 
+### 4. Install Python dependencies (Optional)
+
+If you want to run the Python backend or use Python tools:
+
+```bash
+# Install base requirements
+pip install -r requirements.txt
+
+# Install development dependencies
+pip install -r requirements-dev.txt
+
+# Install production dependencies only
+pip install -r requirements-prod.txt
+```
+
+### 5. Start the backend and frontend 
 
 **Option 1: Use the dev setup script (Recommended)**
 ```bash
@@ -89,6 +110,22 @@ npm start
 # API calls will be automatically proxied to backend
 ```
 
+## Python Dependencies
+
+The project includes several requirements files for different use cases:
+
+- **`requirements.txt`** - Base dependencies for development and production
+- **`requirements-dev.txt`** - Additional development tools, testing, and code quality tools
+- **`requirements-prod.txt`** - Minimal production dependencies only
+
+### Key Python Packages
+
+- **Flask** - Web framework for Python backend
+- **Docker** - Python Docker SDK for container management
+- **pytest** - Testing framework
+- **black** - Code formatting
+- **flake8** - Linting and style checking
+
 ## Testing
 
 Test the core functionality:
@@ -96,6 +133,18 @@ Test the core functionality:
 ```bash
 # Start local development
 npm run dev
+
+# Run backend tests
+npm test
+
+# Run frontend tests
+cd client && npm test
+
+# Test API endpoints manually
+node test-api.js
+
+# Test core functionality
+node test-core.js
 ```
 
 ## API Endpoints
@@ -113,6 +162,15 @@ npm run dev
 2. **Start the backend server** with `npm start`
 3. **Start the frontend** with `cd client && npm start`
 4. **Open your browser** and start coding!
+
+---
+
+## Development Tools
+
+- **`dev-setup.js`** - Automated development environment setup
+- **`test-api.js`** - Manual API endpoint testing
+- **`test-core.js`** - Core functionality testing
+- **`jest.setup.js`** - Jest testing configuration
 
 ---
 
