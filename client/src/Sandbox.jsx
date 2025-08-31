@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { tomorrow, tomorrowNight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { tomorrow, materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import styles from './Sandbox.module.css';
 import { Sun, Moon, Play, RotateCcw, FileText, Zap, CheckCircle, AlertCircle, Save, Keyboard } from 'lucide-react';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -462,7 +462,7 @@ Please check:
         <div className={styles.codeEditor}>
           <SyntaxHighlighter
             language={language === 'c++' ? 'cpp' : language}
-            style={theme === 'dark' ? tomorrowNight : tomorrow}
+            style={theme === 'dark' ? materialDark : tomorrow}
             customStyle={{
               margin: 0,
               borderRadius: '8px',
