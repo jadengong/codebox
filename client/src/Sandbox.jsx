@@ -19,6 +19,11 @@ function Sandbox() {
   const [executionTime, setExecutionTime] = useState(null);
   const [showShortcuts, setShowShortcuts] = useState(false);
 
+  // Apply theme to body element for background changes
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
+
   // Enhanced code examples for each language
   const codeExamples = {
     python: `# Welcome to Python! 🐍
@@ -380,7 +385,7 @@ Please check:
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           <h1 className={styles.title}>{greeting}</h1>
-          <p className={styles.subtitle}>Write, run, and experiment with code in multiple languages</p>
+          <p className={styles.subtitle}>Write, run, and experiment with code in multiple languages.</p>
         </div>
         <div className={styles.headerActions}>
           <button

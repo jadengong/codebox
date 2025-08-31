@@ -68,7 +68,7 @@ function LandingPage() {
                 <ArrowRight size={20} />
               </button>
               <a 
-                href="https://github.com/yourusername/code-execution-sandbox" 
+                href="https://github.com/jadengong/codebox" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="github-button"
@@ -169,7 +169,7 @@ print(f"Fibonacci(10): {fib(10)}")`}
             <h4>Quick Links</h4>
             <ul>
               <li><button onClick={handleStart}>Start Coding</button></li>
-              <li><a href="https://github.com/yourusername/code-execution-sandbox" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+              <li><a href="https://github.com/jadengong/code-execution-sandbox" target="_blank" rel="noopener noreferrer">GitHub</a></li>
               <li><a href="/docs" target="_blank" rel="noopener noreferrer">Documentation</a></li>
             </ul>
           </div>

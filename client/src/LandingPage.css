@@ -3,7 +3,7 @@
 .landing-container {
   min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
   color: white;
   overflow-x: hidden;
 }
@@ -48,7 +48,7 @@
 }
 
 .highlight {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #d4a574 0%, #b8860b 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -73,7 +73,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 1rem 2rem;
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #d4a574 0%, #b8860b 100%);
   color: white;
   border: none;
   border-radius: 50px;
@@ -82,12 +82,12 @@
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
-  box-shadow: 0 8px 25px rgba(240, 147, 251, 0.3);
+  box-shadow: 0 8px 25px rgba(212, 165, 116, 0.3);
 }
 
 .cta-button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(240, 147, 251, 0.4);
+  box-shadow: 0 12px 35px rgba(212, 165, 116, 0.4);
 }
 
 .github-button {
@@ -149,19 +149,19 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #ff5f56;
+  background: #d4a574;
 }
 
 .code-dots span:nth-child(2) {
-  background: #ffbd2e;
+  background: #b8860b;
 }
 
 .code-dots span:nth-child(3) {
-  background: #27ca3f;
+  background: #8b4513;
 }
 
 .code-title {
-  color: #d4d4d4;
+  color: #d4a574;
   font-size: 0.9rem;
   font-weight: 500;
 }
@@ -172,7 +172,7 @@
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.9rem;
   line-height: 1.6;
-  color: #d4d4d4;
+  color: #f5f5dc;
   background: #1e1e1e;
 }
 
@@ -189,7 +189,7 @@ section {
   font-size: 2.5rem;
   font-weight: 700;
   margin: 0 0 3rem 0;
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #d4a574 0%, #b8860b 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -242,7 +242,7 @@ section {
 
 .feature-icon {
   margin-bottom: 1.5rem;
-  color: #f093fb;
+  color: #d4a574;
 }
 
 .feature-title {
@@ -310,7 +310,7 @@ section {
 
 /* CTA Section */
 .cta-section {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #d4a574 0%, #b8860b 100%);
   text-align: center;
   border-radius: 20px;
   margin: 2rem auto;
