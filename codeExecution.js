@@ -119,6 +119,29 @@ int main() {
 }`.trim();
         }
 
+        if (language === 'python') {
+            // Add common imports if they're used in the code
+            let imports = '';
+            if (code.includes('List[') || code.includes('Dict[') || code.includes('Tuple[') || code.includes('Optional[')) {
+                imports = 'from typing import *\n';
+            }
+            if (code.includes('np.') || code.includes('numpy')) {
+                imports += 'import numpy as np\n';
+            }
+            if (code.includes('pd.') || code.includes('pandas')) {
+                imports += 'import pandas as pd\n';
+            }
+            if (code.includes('plt.') || code.includes('matplotlib')) {
+                imports += 'import matplotlib.pyplot as plt\n';
+            }
+            
+            if (imports) {
+                processedCode = `${imports}\n${code}`;
+            } else {
+                processedCode = code;
+            }
+        }
+
         // Write code to temporary file
         fs.writeFileSync(filepath, processedCode);
 
