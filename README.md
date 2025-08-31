@@ -86,7 +86,8 @@ npm start
 Test the core functionality:
 
 ```bash
-node test-core.js
+# Start local development
+npm run dev
 ```
 
 ## API Endpoints
@@ -95,6 +96,19 @@ node test-core.js
 - `GET /api/health` - Health check
 - `POST /api/execute` - Execute code
 - `POST /api/cleanup` - Manual cleanup
+
+---
+
+## 🚀 Getting Started
+
+1. **Clone and install dependencies** (see Setup Instructions above)
+2. **Start the backend server** with `npm start`
+3. **Start the frontend** with `cd client && npm start`
+4. **Open your browser** and start coding!
+
+---
+
+**Happy Coding! 🎉**
 
 
 
