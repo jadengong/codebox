@@ -18,7 +18,7 @@ function Sandbox() {
   const [executionTime, setExecutionTime] = useState(null);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [editorDimensions, setEditorDimensions] = useState({ width: 400, height: 300 });
-  const [editorKey, setEditorKey] = useState(0);
+
   const [isCleared, setIsCleared] = useState(false);
 
   // Apply theme to body element for background changes
@@ -485,8 +485,6 @@ Please check:
     setOutput('');
     setHasError(false);
     setExecutionTime(null);
-    // Force editor re-render to ensure it's properly cleared
-    setEditorKey(prev => prev + 1);
     console.log('Code state cleared, new code value:', '');
   };
 
@@ -596,36 +594,38 @@ Please check:
       },
       minHeight: '44px',
     }),
-    menu: (base) => ({
-      ...base,
-      backgroundColor: theme === 'dark' ? '#2d2d2d' : '#fff',
-      borderRadius: '8px',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-      border: `1px solid ${theme === 'dark' ? '#555' : '#ccc'}`,
-      zIndex: 1000,
-    }),
-    menuList: (base) => ({
-      ...base,
-      backgroundColor: theme === 'dark' ? '#2d2d2d' : '#fff',
-      borderRadius: '8px',
-      padding: '4px 0',
-    }),
-    option: (base, state) => ({
-      ...base,
-      backgroundColor: state.isSelected
-        ? theme === 'dark' ? '#444' : '#ddd'
-        : state.isFocused
-        ? theme === 'dark' ? '#333' : '#eee'
-        : 'transparent',
-      color: theme === 'dark' ? '#fff' : '#000',
-      cursor: 'pointer',
-      padding: '12px 16px',
-      '&:hover': {
-        backgroundColor: state.isSelected
-          ? theme === 'dark' ? '#444' : '#ddd'
-          : theme === 'dark' ? '#333' : '#eee',
-      },
-    }),
+              menu: (base) => ({
+       ...base,
+       backgroundColor: theme === 'dark' ? '#2d2d2d' : '#fff',
+       borderRadius: '8px',
+       boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+       border: `1px solid ${theme === 'dark' ? '#555' : '#ccc'}`,
+       zIndex: 9999,
+     }),
+         menuList: (base) => ({
+       ...base,
+       backgroundColor: theme === 'dark' ? '#2d2d2d' : '#fff',
+       borderRadius: '8px',
+       padding: '4px 0',
+       zIndex: 9999,
+     }),
+         option: (base, state) => ({
+       ...base,
+       backgroundColor: state.isSelected
+         ? theme === 'dark' ? '#444' : '#ddd'
+         : state.isFocused
+         ? theme === 'dark' ? '#333' : '#eee'
+         : 'transparent',
+       color: theme === 'dark' ? '#fff' : '#000',
+       cursor: 'pointer',
+       padding: '12px 16px',
+       zIndex: 9999,
+       '&:hover': {
+         backgroundColor: state.isSelected
+           ? theme === 'dark' ? '#444' : '#ddd'
+           : theme === 'dark' ? '#333' : '#eee',
+       },
+     }),
     singleValue: (base) => ({
       ...base,
       color: theme === 'dark' ? '#fff' : '#000',
@@ -710,58 +710,16 @@ Please check:
         </div>
       )}
 
-      {/* Connection Status */}
-      <div className={`${styles.connectionStatus} ${styles[`status-${connectionStatus}`]}`}>
-        <div className={styles.statusDot}></div>
-        <span>{getConnectionStatusText()}</span>
-      </div>
-
-      {/* Language Selection */}
-      <div className={styles.languageSection}>
-        <label className={styles.label}>Programming Language:</label>
-        <div className={styles.selectWrapper}>
-          <Select
-            key={theme} // Force re-render on theme change
-            options={languageOptions}
-            value={languageOptions.find((opt) => opt.value === language)}
-            onChange={(selected) => {
-              console.log('Language selection changed:', selected);
-              console.log('Selected value:', selected?.value);
-              console.log('Current language state:', language);
-              if (selected && selected.value) {
-                console.log('Setting language to:', selected.value);
-                setIsCleared(false);
-                setLanguage(selected.value);
-                console.log('Language state after setLanguage:', selected.value);
-              } else {
-                console.log('No valid selection:', selected);
-              }
-            }}
-            styles={customSelectStyles}
-            isSearchable={false}
-            placeholder="Select language..."
-            menuPlacement="auto"
-            menuPosition="absolute"
-            closeMenuOnSelect={true}
-            blurInputOnSelect={true}
-            isClearable={false}
-            unstyled={false}
-            classNames={{
-              control: () => 'select-control',
-              menu: () => 'select-menu',
-              option: () => 'select-option',
-            }}
-            onMenuOpen={() => {
-              console.log('Menu opened, current language:', language);
-              console.log('Available options:', languageOptions);
-            }}
-            onMenuClose={() => console.log('Menu closed')}
-          />
+      {/* Connection Status - Only show when disconnected */}
+      {connectionStatus !== 'connected' && (
+        <div className={`${styles.connectionStatus} ${styles[`status-${connectionStatus}`]}`}>
+          <div className={styles.statusDot}></div>
+          <span>{getConnectionStatusText()}</span>
         </div>
-      </div>
+      )}
 
       {/* Code Editor Section */}
-      <div className={styles.editorSection}>
+      <div className={`${styles.editorSection} ${connectionStatus !== 'connected' ? styles.fullWidth : ''}`}>
         <div className={styles.editorHeader}>
           <h3>Code Editor</h3>
           <div className={styles.editorInfo}>
@@ -776,7 +734,6 @@ Please check:
         
         <div className={styles.codeEditor}>
           <Editor
-            key={`${language}-${editorKey}`}
             height="100%"
             language={getMonacoLanguage(language)}
             value={code}
@@ -816,6 +773,53 @@ Please check:
         </div>
       </div>
 
+      {/* Language Selection - Now positioned above the action buttons */}
+      {connectionStatus === 'connected' && (
+        <div className={styles.languageSection}>
+          <label className={styles.label}>Language:</label>
+          <div className={styles.selectWrapper}>
+            <Select
+              key={theme} // Force re-render on theme change
+              options={languageOptions}
+              value={languageOptions.find((opt) => opt.value === language)}
+              onChange={(selected) => {
+                console.log('Language selection changed:', selected);
+                console.log('Selected value:', selected?.value);
+                console.log('Current language state:', language);
+                if (selected && selected.value) {
+                  console.log('Setting language to:', selected.value);
+                  setIsCleared(false);
+                  setLanguage(selected.value);
+                  console.log('Language state after setLanguage:', selected.value);
+                } else {
+                  console.log('No valid selection:', selected);
+                }
+              }}
+              styles={customSelectStyles}
+              isSearchable={false}
+              placeholder="Select language..."
+              menuPlacement="bottom"
+              menuPosition="absolute"
+              closeMenuOnSelect={true}
+              blurInputOnSelect={true}
+              isClearable={false}
+              unstyled={false}
+              captureMenuScroll={false}
+              classNames={{
+                control: () => 'select-control',
+                menu: () => 'select-menu',
+                option: () => 'select-option',
+              }}
+              onMenuOpen={() => {
+                console.log('Menu opened, current language:', language);
+                console.log('Available options:', languageOptions);
+              }}
+              onMenuClose={() => console.log('Menu closed')}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Action Buttons */}
       <div className={styles.actionButtons}>
         <button 
@@ -831,7 +835,7 @@ Please check:
           ) : (
             <>
               <Play size={16} />
-              Run Code
+              Run
             </>
           )}
         </button>
@@ -882,25 +886,6 @@ Please check:
           <pre className={styles.outputContent}>{output}</pre>
         </div>
       )}
-
-      {/* Language Info */}
-      <div className={styles.languageInfo}>
-        <h4>Current Language: {getLanguageLabel(language)}</h4>
-        <p>
-          {language === 'python' && 'Python is great for beginners and data science!'}
-          {language === 'javascript' && 'JavaScript powers the modern web!'}
-          {language === 'typescript' && 'TypeScript adds static typing to JavaScript!'}
-          {language === 'java' && 'Java is perfect for enterprise applications!'}
-          {language === 'kotlin' && 'Kotlin is modern, concise, and interoperable with Java!'}
-          {language === 'c++' && 'C++ gives you low-level control and high performance!'}
-          {language === 'csharp' && 'C# is Microsoft\'s modern, object-oriented language!'}
-          {language === 'go' && 'Go is simple, fast, and great for concurrent programming!'}
-          {language === 'rust' && 'Rust provides memory safety without garbage collection!'}
-          {language === 'php' && 'PHP is widely used for web development!'}
-          {language === 'ruby' && 'Ruby emphasizes simplicity and productivity!'}
-          {language === 'swift' && 'Swift is Apple\'s modern language for iOS development!'}
-        </p>
-      </div>
     </div>
   );
 }
