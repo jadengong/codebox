@@ -86,6 +86,42 @@ html body.dark {
     background-color: #1a1a1a !important;
 }
 
+/* Prevent layout shifts during theme changes */
+* {
+    box-sizing: border-box;
+}
+
+/* Ensure consistent spacing across themes */
+.container,
+.output,
+.languageInfo,
+.codeEditor,
+.connectionStatus,
+.shortcutsContent,
+.languageSection,
+.actionButtons {
+    /* Prevent any size changes during theme transitions */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    /* Additional stability */
+    will-change: auto;
+}
+
+/* Smooth theme transitions without layout shifts */
+.light,
+.dark {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Ensure buttons maintain consistent dimensions */
+.runButton,
+.exampleButton,
+.clearButton,
+.closeButton {
+    min-height: 44px;
+    box-sizing: border-box;
+}
+
 /* Header Styles */
 .header {
     display: flex;
@@ -201,11 +237,17 @@ html body.dark {
     max-width: 500px;
     width: 90%;
     animation: modalSlideIn 0.3s ease-out;
+    /* Ensure consistent sizing */
+    min-height: 300px;
+    box-sizing: border-box;
 }
 
 .dark .shortcutsContent {
     background: #2d2d2d;
     color: #ecf0f1;
+    /* Keep same dimensions and shadow */
+    min-height: 300px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes modalSlideIn {
@@ -282,6 +324,9 @@ html body.dark {
     font-weight: 500;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
+    /* Ensure consistent sizing */
+    min-height: 50px;
+    box-sizing: border-box;
 }
 
 .status-connected {
@@ -325,6 +370,9 @@ html body.dark {
     align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
+    /* Prevent layout shifts */
+    min-height: 50px;
+    align-items: center;
 }
 
 .label {
@@ -332,15 +380,49 @@ html body.dark {
     color: inherit;
     font-size: 1.1rem;
     white-space: nowrap;
+    /* Prevent text wrapping */
+    flex-shrink: 0;
 }
 
 .selectWrapper {
     min-width: 200px;
+    /* Prevent size changes */
+    flex-shrink: 0;
 }
 
 /* Code Editor Section */
 .editorSection {
     margin-bottom: 2rem;
+    /* Prevent layout shifts */
+    min-height: 350px;
+    /* Ensure consistent sizing */
+    box-sizing: border-box;
+    /* Prevent any movement */
+    position: relative;
+    transform: translateZ(0);
+}
+
+/* Ensure syntax highlighter maintains consistent dimensions */
+.codeEditor > * {
+    margin: 0 !important;
+    height: 100% !important;
+    min-height: 300px !important;
+    box-sizing: border-box !important;
+}
+
+/* Override any theme-specific sizing in the syntax highlighter */
+.codeEditor pre {
+    margin: 0 !important;
+    height: 100% !important;
+    min-height: 300px !important;
+    box-sizing: border-box !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+}
+
+/* Force consistent dimensions for any child elements */
+.codeEditor * {
+    box-sizing: border-box !important;
 }
 
 .editorHeader {
@@ -374,6 +456,13 @@ html body.dark {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     border: 2px solid transparent;
     transition: border-color 0.3s ease;
+    /* Ensure consistent sizing */
+    min-height: 300px;
+    height: 300px;
+    box-sizing: border-box;
+    /* Prevent any size changes */
+    flex-shrink: 0;
+    flex-grow: 0;
 }
 
 .codeEditor:focus-within {
@@ -398,6 +487,8 @@ html body.dark {
     background: transparent;
     color: transparent;
     caret-color: #333;
+    /* Ensure consistent sizing */
+    box-sizing: border-box;
 }
 
 .dark .hiddenTextarea {
@@ -410,6 +501,9 @@ html body.dark {
     gap: 1rem;
     flex-wrap: wrap;
     margin-bottom: 2rem;
+    /* Prevent layout shifts */
+    min-height: 60px;
+    align-items: center;
 }
 
 .runButton, .exampleButton, .clearButton {
@@ -421,11 +515,15 @@ html body.dark {
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
     font-size: 1rem;
     text-decoration: none;
     min-width: 120px;
+    min-height: 44px;
     justify-content: center;
+    /* Prevent any size changes */
+    box-sizing: border-box;
+    flex-shrink: 0;
 }
 
 .runButton {
@@ -484,6 +582,19 @@ html body.dark {
     box-shadow: 0 6px 20px rgba(149, 165, 166, 0.4);
 }
 
+/* Prevent any button movement during theme changes */
+.runButton,
+.exampleButton,
+.clearButton {
+    /* Ensure consistent positioning */
+    position: relative;
+    /* Prevent any size changes */
+    flex-shrink: 0;
+    /* Maintain exact dimensions */
+    width: auto;
+    height: 44px;
+}
+
 /* Output Section */
 .output {
     margin-top: 2rem;
@@ -494,32 +605,46 @@ html body.dark {
     transition: all 0.3s ease;
     border: 2px solid #dee2e6;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    /* Ensure consistent sizing */
+    min-height: 100px;
+    box-sizing: border-box;
 }
 
 .dark .output {
     background: #1a1a1a;
     color: #ecf0f1;
     border-color: #4a5568;
+    /* Keep same border width and shadow */
+    border-width: 2px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .success {
     border-color: #27ae60;
     background: #d4edda;
+    border-width: 2px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .dark .success {
     background: #1e3a2e;
     border-color: #27ae60;
+    border-width: 2px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .error {
     border-color: #e74c3c;
     background: #f8d7da;
+    border-width: 2px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .dark .error {
     background: #3e1e1e;
     border-color: #e74c3c;
+    border-width: 2px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .outputHeader {
@@ -587,11 +712,23 @@ html body.dark {
     border-radius: 12px;
     border: 2px solid #dee2e6;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    /* Ensure consistent sizing */
+    min-height: 80px;
+    box-sizing: border-box;
+    /* Prevent any movement */
+    position: relative;
+    transform: translateZ(0);
 }
 
 .dark .languageInfo {
     background: #1a1a1a;
     border-color: #4a5568;
+    /* Keep same border width and shadow */
+    border-width: 2px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    /* Maintain exact same positioning */
+    position: relative;
+    transform: translateZ(0);
 }
 
 .languageInfo h4 {
