@@ -18,6 +18,8 @@ function Sandbox() {
   const [executionTime, setExecutionTime] = useState(null);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [editorDimensions, setEditorDimensions] = useState({ width: 400, height: 300 });
+  const [editorKey, setEditorKey] = useState(0);
+  const [isCleared, setIsCleared] = useState(false);
 
   // Apply theme to body element for background changes
   useEffect(() => {
@@ -283,10 +285,10 @@ print(greet("Developer"))`
 
   // Load default code when language changes
   useEffect(() => {
-    if (!code || code.trim() === '') {
+    if ((!code || code.trim() === '') && !isCleared) {
       setCode(codeExamples[language] || '');
     }
-  }, [language, code, codeExamples]);
+  }, [language, code, codeExamples, isCleared]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -411,7 +413,7 @@ print(greet("Developer"))`
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ code: code.trim(), language }),
+        body: JSON.stringify({ code: code.trim(), language: getBackendLanguage(language) }),
       });
 
       console.log('[Frontend] Execute response:', response.status, response.ok);
@@ -462,13 +464,18 @@ Please check:
   };
 
   const handleClear = () => {
+    console.log('Clear button clicked, clearing code...');
+    setIsCleared(true);
     setCode('');
     setOutput('');
     setHasError(false);
     setExecutionTime(null);
+    setEditorKey(prev => prev + 1);
+    console.log('Code state cleared, new code value:', '');
   };
 
   const handleLoadExample = () => {
+    setIsCleared(false);
     setCode(codeExamples[language] || '');
     setOutput('');
     setHasError(false);
@@ -491,6 +498,36 @@ Please check:
       case 'error': return 'Backend Error';
       default: return 'Checking Connection...';
     }
+  };
+
+  const getMonacoLanguage = (lang) => {
+    const languageMap = {
+      'c++': 'cpp',
+      'csharp': 'csharp',
+      'typescript': 'typescript',
+      'kotlin': 'kotlin',
+      'go': 'go',
+      'rust': 'rust',
+      'php': 'php',
+      'ruby': 'ruby',
+      'swift': 'swift'
+    };
+    return languageMap[lang] || lang;
+  };
+
+  const getBackendLanguage = (lang) => {
+    const languageMap = {
+      'c++': 'cpp',
+      'csharp': 'csharp',
+      'typescript': 'typescript',
+      'kotlin': 'kotlin',
+      'go': 'go',
+      'rust': 'rust',
+      'php': 'php',
+      'ruby': 'ruby',
+      'swift': 'swift'
+    };
+    return languageMap[lang] || lang;
   };
 
   const getLanguageLabel = (lang) => {
@@ -673,9 +710,13 @@ Please check:
             value={languageOptions.find((opt) => opt.value === language)}
             onChange={(selected) => {
               console.log('Language selection changed:', selected);
+              console.log('Selected value:', selected?.value);
+              console.log('Current language state:', language);
               if (selected && selected.value) {
                 console.log('Setting language to:', selected.value);
+                setIsCleared(false);
                 setLanguage(selected.value);
+                console.log('Language state after setLanguage:', selected.value);
               } else {
                 console.log('No valid selection:', selected);
               }
@@ -694,7 +735,10 @@ Please check:
               menu: () => 'select-menu',
               option: () => 'select-option',
             }}
-            onMenuOpen={() => console.log('Menu opened')}
+            onMenuOpen={() => {
+              console.log('Menu opened, current language:', language);
+              console.log('Available options:', languageOptions);
+            }}
             onMenuClose={() => console.log('Menu closed')}
           />
         </div>
@@ -716,8 +760,9 @@ Please check:
         
         <div className={styles.codeEditor}>
           <Editor
+            key={`${language}-${editorKey}`}
             height="100%"
-            language={language === 'c++' ? 'cpp' : language}
+            language={getMonacoLanguage(language)}
             value={code}
             onChange={(value) => setCode(value || '')}
             theme={theme === 'dark' ? 'vs-dark' : 'vs'}
