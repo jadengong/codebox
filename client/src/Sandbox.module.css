@@ -263,7 +263,31 @@ html body.dark {
 }
 
 .shortcutsList {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
+}
+
+.shortcutsNote {
+    margin-bottom: 1.5rem;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+    border-left: 3px solid #d4a574;
+}
+
+.dark .shortcutsNote {
+    background: rgba(255, 255, 255, 0.05);
+    border-left-color: #d4a574;
+}
+
+.shortcutsNote p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+.dark .shortcutsNote p {
+    color: #bbb;
 }
 
 .shortcutItem {
@@ -432,6 +456,13 @@ html body.dark {
     margin-bottom: 1rem;
 }
 
+.editorInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+}
+
 .editorHeader h3 {
     margin: 0;
     font-size: 1.3rem;
@@ -446,6 +477,17 @@ html body.dark {
 }
 
 .dark .characterCount {
+    color: #bdc3c7;
+}
+
+.resizeInfo {
+    font-size: 0.75rem;
+    color: #7f8c8d;
+    font-weight: 400;
+    font-style: italic;
+}
+
+.dark .resizeInfo {
     color: #bdc3c7;
 }
 
@@ -469,30 +511,71 @@ html body.dark {
     border-color: #d4a574;
 }
 
-.hiddenTextarea {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    z-index: 10;
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: 14px;
-    line-height: 1.5;
-    padding: 1rem;
-    border: none;
-    outline: none;
-    resize: none;
-    background: transparent;
-    color: transparent;
-    caret-color: #333;
-    /* Ensure consistent sizing */
-    box-sizing: border-box;
+/* Monaco Editor Customization */
+.codeEditor .monaco-editor {
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100% !important;
+    height: 100% !important;
 }
 
-.dark .hiddenTextarea {
-    caret-color: #fff;
+.codeEditor .monaco-editor .monaco-editor-background {
+    border-radius: 8px;
+}
+
+.codeEditor .monaco-editor .margin {
+    border-radius: 8px;
+}
+
+/* Make the editor container resizable */
+.codeEditor {
+    resize: both;
+    overflow: hidden;
+    min-width: 400px;
+    min-height: 300px;
+    max-width: 1200px;
+    max-height: 800px;
+    position: relative;
+    transition: box-shadow 0.2s ease;
+}
+
+.codeEditor:hover {
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.dark .codeEditor:hover {
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Add a subtle resize handle indicator */
+.codeEditor::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 0;
+    border-bottom: 8px solid #d4a574;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+    cursor: se-resize;
+}
+
+.codeEditor:hover::after {
+    opacity: 1;
+}
+
+/* Dark theme resize handle */
+.dark .codeEditor::after {
+    border-bottom-color: #d4a574;
+}
+
+/* Ensure Monaco Editor fills the resizable container */
+.codeEditor > div {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 /* Action Buttons */

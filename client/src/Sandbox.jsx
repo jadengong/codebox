@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { tomorrow, materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import Editor from '@monaco-editor/react';
 import styles from './Sandbox.module.css';
 import { Sun, Moon, Play, RotateCcw, FileText, Zap, CheckCircle, AlertCircle, Save, Keyboard } from 'lucide-react';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -18,6 +17,7 @@ function Sandbox() {
   const [connectionStatus, setConnectionStatus] = useState('unknown');
   const [executionTime, setExecutionTime] = useState(null);
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [editorDimensions, setEditorDimensions] = useState({ width: 400, height: 300 });
 
   // Apply theme to body element for background changes
   useEffect(() => {
@@ -35,6 +35,23 @@ function Sandbox() {
     document.body.classList.add(theme);
     document.documentElement.classList.add(theme);
     console.log('Initial theme applied:', theme);
+  }, []);
+
+  // Track editor dimensions
+  useEffect(() => {
+    const editorElement = document.querySelector(`.${styles.codeEditor}`);
+    if (!editorElement) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const { width, height } = entry.contentRect;
+        setEditorDimensions({ width: Math.round(width), height: Math.round(height) });
+      }
+    });
+
+    resizeObserver.observe(editorElement);
+
+    return () => resizeObserver.disconnect();
   }, []);
 
   // Enhanced code examples for each language
@@ -140,8 +157,8 @@ int main() {
         }
       }
       
-      // Ctrl+S to save/load example
-      if (e.ctrlKey && e.key === 's') {
+    // Ctrl+Shift+S to load example (changed from Ctrl+S to avoid conflict with Monaco's save)
+      if (e.ctrlKey && e.shiftKey && e.key === 'S') {
         e.preventDefault();
         handleLoadExample();
       }
@@ -429,13 +446,16 @@ Please check:
                 <span>Run Code</span>
               </div>
               <div className={styles.shortcutItem}>
-                <kbd>Ctrl + S</kbd>
+                <kbd>Ctrl + Shift + S</kbd>
                 <span>Load Example</span>
               </div>
               <div className={styles.shortcutItem}>
                 <kbd>Ctrl + K</kbd>
                 <span>Show/Hide Shortcuts</span>
               </div>
+            </div>
+            <div className={styles.shortcutsNote}>
+              <p>💡 The code editor also supports standard shortcuts like Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+Z, etc.</p>
             </div>
             <button 
               onClick={() => setShowShortcuts(false)}
@@ -472,35 +492,42 @@ Please check:
       <div className={styles.editorSection}>
         <div className={styles.editorHeader}>
           <h3>Code Editor</h3>
-          <div className={styles.characterCount}>
-            {code.length}/10,000 characters
+          <div className={styles.editorInfo}>
+            <div className={styles.characterCount}>
+              {code.length}/10,000 characters
+            </div>
+            <div className={styles.resizeInfo}>
+              💡 Drag to resize • {editorDimensions.width}×{editorDimensions.height}px
+            </div>
           </div>
         </div>
         
         <div className={styles.codeEditor}>
-          <SyntaxHighlighter
+          <Editor
+            height="100%"
             language={language === 'c++' ? 'cpp' : language}
-            style={theme === 'dark' ? materialDark : tomorrow}
-            customStyle={{
-              margin: 0,
-              borderRadius: '8px',
-              fontSize: '14px',
-              lineHeight: '1.5',
-              minHeight: '300px',
-            }}
-            showLineNumbers={true}
-            wrapLines={true}
-          >
-            {code || '// Start coding here...'}
-          </SyntaxHighlighter>
-          
-          <textarea
             value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="Write your code here..."
-            className={styles.hiddenTextarea}
-            disabled={isRunning}
-            spellCheck={false}
+            onChange={(value) => setCode(value || '')}
+            theme={theme === 'dark' ? 'vs-dark' : 'vs'}
+            options={{
+              minimap: { enabled: false },
+              fontSize: 14,
+              lineHeight: 1.5,
+              wordWrap: 'on',
+              scrollBeyondLastLine: false,
+              padding: { top: 10, bottom: 10 },
+              overviewRulerBorder: false,
+              overviewRulerLanes: 0,
+              scrollbar: {
+                horizontal: 'auto',
+                vertical: 'auto',
+              },
+              readOnly: isRunning,
+              lineNumbers: 'on',
+              roundedSelection: false,
+              automaticLayout: true,
+              fixedOverflowWidgets: true,
+            }}
           />
         </div>
       </div>
