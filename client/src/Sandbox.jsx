@@ -3,7 +3,8 @@ import Select from 'react-select';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow, tomorrowNight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import styles from './Sandbox.module.css';
-import { Sun, Moon, Play, RotateCcw, FileText, Zap, CheckCircle, AlertCircle } from 'lucide-react';
+import { Sun, Moon, Play, RotateCcw, FileText, Zap, CheckCircle, AlertCircle, Save, Keyboard } from 'lucide-react';
+import LoadingSpinner from './components/LoadingSpinner';
 
 function Sandbox() {
   const greeting = "Hello, and welcome to the Code Sandbox! 👋";
@@ -16,6 +17,7 @@ function Sandbox() {
   const [hasError, setHasError] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState('unknown');
   const [executionTime, setExecutionTime] = useState(null);
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
   // Enhanced code examples for each language
   const codeExamples = {
@@ -108,6 +110,34 @@ int main() {
       setCode(codeExamples[language] || '');
     }
   }, [language, code, codeExamples]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl+Enter to run code
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        if (!isRunning && code.trim() && connectionStatus === 'connected') {
+          handleRun();
+        }
+      }
+      
+      // Ctrl+S to save/load example
+      if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        handleLoadExample();
+      }
+      
+      // Ctrl+K to show shortcuts
+      if (e.ctrlKey && e.key === 'k') {
+        e.preventDefault();
+        setShowShortcuts(!showShortcuts);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isRunning, code, connectionStatus, showShortcuts]);
 
   const checkBackendConnection = async () => {
     try {
@@ -352,14 +382,52 @@ Please check:
           <h1 className={styles.title}>{greeting}</h1>
           <p className={styles.subtitle}>Write, run, and experiment with code in multiple languages</p>
         </div>
-        <button
-          onClick={toggleTheme}
-          aria-label="Toggle theme"
-          className={styles.themeToggle}
-        >
-          {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
-        </button>
+        <div className={styles.headerActions}>
+          <button
+            onClick={() => setShowShortcuts(!showShortcuts)}
+            className={styles.shortcutsButton}
+            title="Keyboard Shortcuts (Ctrl+K)"
+          >
+            <Keyboard size={20} />
+          </button>
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className={styles.themeToggle}
+          >
+            {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
+          </button>
+        </div>
       </div>
+
+      {/* Keyboard Shortcuts Modal */}
+      {showShortcuts && (
+        <div className={styles.shortcutsModal}>
+          <div className={styles.shortcutsContent}>
+            <h3>Keyboard Shortcuts</h3>
+            <div className={styles.shortcutsList}>
+              <div className={styles.shortcutItem}>
+                <kbd>Ctrl + Enter</kbd>
+                <span>Run Code</span>
+              </div>
+              <div className={styles.shortcutItem}>
+                <kbd>Ctrl + S</kbd>
+                <span>Load Example</span>
+              </div>
+              <div className={styles.shortcutItem}>
+                <kbd>Ctrl + K</kbd>
+                <span>Show/Hide Shortcuts</span>
+              </div>
+            </div>
+            <button 
+              onClick={() => setShowShortcuts(false)}
+              className={styles.closeButton}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Connection Status */}
       <div className={`${styles.connectionStatus} ${styles[`status-${connectionStatus}`]}`}>
@@ -428,7 +496,7 @@ Please check:
         >
           {isRunning ? (
             <>
-              <RotateCcw size={16} className={styles.spinning} />
+              <LoadingSpinner size="small" color="white" />
               Running...
             </>
           ) : (
