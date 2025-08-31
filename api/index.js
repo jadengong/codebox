@@ -15,7 +15,7 @@ export default async function handler(req, res) {
 
   res.json({ 
     message: 'Welcome to CodeBox API - Running on Vercel!',
-    supportedLanguages: ['python', 'javascript', 'java', 'cpp'],
+    supportedLanguages: ['python', 'javascript', 'typescript', 'java', 'kotlin', 'cpp', 'csharp', 'go', 'rust', 'php', 'ruby', 'swift'],
     endpoints: {
       'GET /api': 'API information (this endpoint)',
       'GET /api/health': 'Health check and system status',

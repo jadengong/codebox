@@ -84,7 +84,7 @@ const languageConfigs = {
     go: {
         ext: 'go',
         image: 'golang:1.21-alpine',
-        run: (filename) => `sh -c "cd /app && go run ${filename}`,
+        run: (filename) => `sh -c "cd /app && go run ${filename}"`,
         timeout: 15000
     },
     rust: {
@@ -127,21 +127,26 @@ async function runCodeInDocker(code, language) {
     const languageMap = {
         'c++': 'cpp',
         'cpp': 'cpp',
+        'cplusplus': 'cpp',
         'javascript': 'javascript',
         'js': 'javascript',
-        'java': 'java',
-        'python': 'python',
-        'py': 'python',
         'typescript': 'typescript',
         'ts': 'typescript',
+        'java': 'java',
         'kotlin': 'kotlin',
         'kt': 'kotlin',
+        'python': 'python',
+        'py': 'python',
         'csharp': 'csharp',
         'cs': 'csharp',
+        'dotnet': 'csharp',
         'go': 'go',
+        'golang': 'go',
         'rust': 'rust',
+        'rs': 'rust',
         'php': 'php',
         'ruby': 'ruby',
+        'rb': 'ruby',
         'swift': 'swift'
     };
 
