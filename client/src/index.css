@@ -2,20 +2,41 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #cec3b8; 
+  background-color: #f8f9fa; 
   color: #333;
   font-family: 'Segoe UI', sans-serif;
+  transition: background-color 0.3s ease;
 }
 
-/* Slight texture */
-body::before {
+/* Theme-specific backgrounds */
+body.light {
+  background-color: #f8f9fa;
+}
+
+body.dark {
+  background-color: #1a1a1a;
+}
+
+/* Slight texture - only visible in light mode */
+body.light::before {
   content: "";
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
   background-image: radial-gradient(#e9e9e9 1px, transparent 1px);
   background-size: 20px 20px;
-  opacity: 0.25;
+  opacity: 0.15;
+  z-index: -1;
+}
+
+body.dark::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-image: radial-gradient(#2d2d2d 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.1;
   z-index: -1;
 }
 

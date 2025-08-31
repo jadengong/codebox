@@ -7,7 +7,7 @@ import { Sun, Moon, Play, RotateCcw, FileText, Zap, CheckCircle, AlertCircle, Sa
 import LoadingSpinner from './components/LoadingSpinner';
 
 function Sandbox() {
-  const greeting = "Hello, and welcome to the Code Sandbox! 👋";
+  const greeting = "Hello, and welcome to the Code Sandbox!";
 
   const [language, setLanguage] = useState('python');
   const [code, setCode] = useState('');
@@ -21,8 +21,21 @@ function Sandbox() {
 
   // Apply theme to body element for background changes
   useEffect(() => {
-    document.body.className = theme;
+    // Remove any existing theme classes first
+    document.body.classList.remove('light', 'dark');
+    document.documentElement.classList.remove('light', 'dark');
+    // Add the current theme class
+    document.body.classList.add(theme);
+    document.documentElement.classList.add(theme);
+    console.log('Theme changed to:', theme, 'Body classes:', document.body.className);
   }, [theme]);
+
+  // Apply initial theme on component mount
+  useEffect(() => {
+    document.body.classList.add(theme);
+    document.documentElement.classList.add(theme);
+    console.log('Initial theme applied:', theme);
+  }, []);
 
   // Enhanced code examples for each language
   const codeExamples = {
