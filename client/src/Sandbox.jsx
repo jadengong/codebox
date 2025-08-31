@@ -369,27 +369,35 @@ Please check:
   ];
 
   const customSelectStyles = {
-    control: (base) => ({
+    control: (base, state) => ({
       ...base,
       backgroundColor: theme === 'dark' ? '#2d2d2d' : '#fff',
       color: theme === 'dark' ? '#fff' : '#000',
-      borderColor: theme === 'dark' ? '#555' : '#ccc',
+      borderColor: state.isFocused 
+        ? '#d4a574' 
+        : theme === 'dark' ? '#555' : '#ccc',
       borderRadius: '8px',
-      boxShadow: 'none',
+      boxShadow: state.isFocused 
+        ? '0 0 0 1px #d4a574' 
+        : 'none',
       '&:hover': {
         borderColor: theme === 'dark' ? '#777' : '#999',
       },
+      minHeight: '44px',
     }),
     menu: (base) => ({
       ...base,
       backgroundColor: theme === 'dark' ? '#2d2d2d' : '#fff',
       borderRadius: '8px',
       boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+      border: `1px solid ${theme === 'dark' ? '#555' : '#ccc'}`,
+      zIndex: 1000,
     }),
     menuList: (base) => ({
       ...base,
       backgroundColor: theme === 'dark' ? '#2d2d2d' : '#fff',
       borderRadius: '8px',
+      padding: '4px 0',
     }),
     option: (base, state) => ({
       ...base,
@@ -397,15 +405,39 @@ Please check:
         ? theme === 'dark' ? '#444' : '#ddd'
         : state.isFocused
         ? theme === 'dark' ? '#333' : '#eee'
-        : theme === 'dark' ? '#2d2d2d' : '#fff',
+        : 'transparent',
       color: theme === 'dark' ? '#fff' : '#000',
       cursor: 'pointer',
       padding: '12px 16px',
+      '&:hover': {
+        backgroundColor: state.isSelected
+          ? theme === 'dark' ? '#444' : '#ddd'
+          : theme === 'dark' ? '#333' : '#eee',
+      },
     }),
     singleValue: (base) => ({
       ...base,
       color: theme === 'dark' ? '#fff' : '#000',
       fontWeight: '600',
+    }),
+    input: (base) => ({
+      ...base,
+      color: theme === 'dark' ? '#fff' : '#000',
+    }),
+    placeholder: (base) => ({
+      ...base,
+      color: theme === 'dark' ? '#bbb' : '#666',
+    }),
+    indicatorSeparator: (base) => ({
+      ...base,
+      backgroundColor: theme === 'dark' ? '#555' : '#ccc',
+    }),
+    dropdownIndicator: (base) => ({
+      ...base,
+      color: theme === 'dark' ? '#fff' : '#000',
+      '&:hover': {
+        color: '#d4a574',
+      },
     }),
   };
 
@@ -478,12 +510,34 @@ Please check:
         <label className={styles.label}>Programming Language:</label>
         <div className={styles.selectWrapper}>
           <Select
+            key={theme} // Force re-render on theme change
             options={languageOptions}
             value={languageOptions.find((opt) => opt.value === language)}
-            onChange={(selected) => setLanguage(selected.value)}
+            onChange={(selected) => {
+              console.log('Language selection changed:', selected);
+              if (selected && selected.value) {
+                console.log('Setting language to:', selected.value);
+                setLanguage(selected.value);
+              } else {
+                console.log('No valid selection:', selected);
+              }
+            }}
             styles={customSelectStyles}
             isSearchable={false}
             placeholder="Select language..."
+            menuPlacement="auto"
+            menuPosition="absolute"
+            closeMenuOnSelect={true}
+            blurInputOnSelect={true}
+            isClearable={false}
+            unstyled={false}
+            classNames={{
+              control: () => 'select-control',
+              menu: () => 'select-menu',
+              option: () => 'select-option',
+            }}
+            onMenuOpen={() => console.log('Menu opened')}
+            onMenuClose={() => console.log('Menu closed')}
           />
         </div>
       </div>
