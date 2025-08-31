@@ -86,8 +86,7 @@ npm start
 Test the core functionality:
 
 ```bash
-# Start local development
-npm run dev
+node test-core.js
 ```
 
 ## API Endpoints
