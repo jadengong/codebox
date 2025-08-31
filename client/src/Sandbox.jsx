@@ -66,7 +66,7 @@ cout << "Sum of 1 to 10: " << sum << endl;`
     if (!code || code.trim() === '') {
       setCode(codeExamples[language] || '');
     }
-  }, [language]);
+  }, [language, code, codeExamples]);
 
   const checkBackendConnection = async () => {
     try {

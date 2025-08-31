@@ -68,17 +68,25 @@ npm install
 
 ### 4. Start the backend and frontend 
 
-Start the backend server (from the root):
+**Option 1: Use the dev setup script (Recommended)**
+```bash
+npm run dev
+```
 
+**Option 2: Start services separately**
+
+Start the backend server (from the root):
 ```bash
 npm start
+# Backend will run on http://localhost:5000
 ```
 
 Start the frontend server (from `/client`):
-
 ```bash
 cd client
 npm start
+# Frontend will run on http://localhost:3000
+# API calls will be automatically proxied to backend
 ```
 
 ## Testing
