@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { tomorrow, tomorrowNight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import styles from './Sandbox.module.css';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, Play, RotateCcw, FileText, Zap, CheckCircle, AlertCircle } from 'lucide-react';
 
 function Sandbox() {
   const greeting = "Hello, and welcome to the Code Sandbox! 👋";
@@ -13,19 +15,28 @@ function Sandbox() {
   const [isRunning, setIsRunning] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState('unknown');
+  const [executionTime, setExecutionTime] = useState(null);
 
-  // Default code examples for each language
+  // Enhanced code examples for each language
   const codeExamples = {
-    python: `print("Hello, World!")
+    python: `# Welcome to Python! 🐍
+print("Hello, World!")
 print("Welcome to Python!")
 
 # Calculate the sum of numbers 1 to 10
 sum = 0
 for i in range(1, 11):
     sum += i
-print(f"Sum of 1 to 10: {sum}")`,
+print(f"Sum of 1 to 10: {sum}")
+
+# Simple function example
+def greet(name):
+    return f"Hello, {name}!"
+
+print(greet("Developer"))`,
     
-    javascript: `console.log("Hello, World!");
+    javascript: `// Welcome to JavaScript! 🚀
+console.log("Hello, World!");
 console.log("Welcome to JavaScript!");
 
 // Calculate the sum of numbers 1 to 10
@@ -33,9 +44,17 @@ let sum = 0;
 for (let i = 1; i <= 10; i++) {
     sum += i;
 }
-console.log(\`Sum of 1 to 10: \${sum}\`);`,
+console.log(\`Sum of 1 to 10: \${sum}\`);
+
+// Simple function example
+function greet(name) {
+    return \`Hello, \${name}!\`;
+}
+
+console.log(greet("Developer"));`,
     
-    java: `System.out.println("Hello, World!");
+    java: `// Welcome to Java! ☕
+System.out.println("Hello, World!");
 System.out.println("Welcome to Java!");
 
 // Calculate the sum of numbers 1 to 10
@@ -43,17 +62,39 @@ int sum = 0;
 for (int i = 1; i <= 10; i++) {
     sum += i;
 }
-System.out.println("Sum of 1 to 10: " + sum);`,
-    
-    'c++': `cout << "Hello, World!" << endl;
-cout << "Welcome to C++!" << endl;
+System.out.println("Sum of 1 to 10: " + sum);
 
-// Calculate the sum of numbers 1 to 10
-int sum = 0;
-for (int i = 1; i <= 10; i++) {
-    sum += i;
+// Simple method example
+String greet(String name) {
+    return "Hello, " + name + "!";
 }
-cout << "Sum of 1 to 10: " << sum << endl;`
+
+System.out.println(greet("Developer"));`,
+    
+    'c++': `// Welcome to C++! ⚡
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    cout << "Hello, World!" << endl;
+    cout << "Welcome to C++!" << endl;
+    
+    // Calculate the sum of numbers 1 to 10
+    int sum = 0;
+    for (int i = 1; i <= 10; i++) {
+        sum += i;
+    }
+    cout << "Sum of 1 to 10: " << sum << endl;
+    
+    // Simple function example
+    string greet(string name) {
+        return "Hello, " + name + "!";
+    }
+    
+    cout << greet("Developer") << endl;
+    return 0;
+}`
   };
 
   // Check backend connection on component mount
@@ -152,6 +193,8 @@ cout << "Sum of 1 to 10: " << sum << endl;`
     setIsRunning(true);
     setHasError(false);
     setOutput('Running...');
+    setExecutionTime(null);
+    const startTime = Date.now();
 
     try {
       console.log('[Frontend] Executing code:', { language, codeLength: code.trim().length });
@@ -172,6 +215,7 @@ cout << "Sum of 1 to 10: " << sum << endl;`
         setOutput(data.result || 'Code executed successfully with no output.');
         setHasError(false);
         setConnectionStatus('connected');
+        setExecutionTime(Date.now() - startTime);
       } else {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
         console.log('[Frontend] Execute error data:', errorData);
@@ -214,12 +258,14 @@ Please check:
     setCode('');
     setOutput('');
     setHasError(false);
+    setExecutionTime(null);
   };
 
   const handleLoadExample = () => {
     setCode(codeExamples[language] || '');
     setOutput('');
     setHasError(false);
+    setExecutionTime(null);
   };
 
   const getConnectionStatusColor = () => {
@@ -240,11 +286,21 @@ Please check:
     }
   };
 
+  const getLanguageLabel = (lang) => {
+    const labels = {
+      'python': '🐍 Python',
+      'javascript': '🚀 JavaScript', 
+      'java': '☕ Java',
+      'c++': '⚡ C++'
+    };
+    return labels[lang] || lang;
+  };
+
   const languageOptions = [
-    { value: 'python', label: 'Python' },
-    { value: 'javascript', label: 'JavaScript' },
-    { value: 'java', label: 'Java' },
-    { value: 'c++', label: 'C++' },
+    { value: 'python', label: '🐍 Python' },
+    { value: 'javascript', label: '🚀 JavaScript' },
+    { value: 'java', label: '☕ Java' },
+    { value: 'c++', label: '⚡ C++' },
   ];
 
   const customSelectStyles = {
@@ -253,14 +309,22 @@ Please check:
       backgroundColor: theme === 'dark' ? '#2d2d2d' : '#fff',
       color: theme === 'dark' ? '#fff' : '#000',
       borderColor: theme === 'dark' ? '#555' : '#ccc',
+      borderRadius: '8px',
+      boxShadow: 'none',
+      '&:hover': {
+        borderColor: theme === 'dark' ? '#777' : '#999',
+      },
     }),
     menu: (base) => ({
       ...base,
       backgroundColor: theme === 'dark' ? '#2d2d2d' : '#fff',
+      borderRadius: '8px',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
     }),
     menuList: (base) => ({
       ...base,
       backgroundColor: theme === 'dark' ? '#2d2d2d' : '#fff',
+      borderRadius: '8px',
     }),
     option: (base, state) => ({
       ...base,
@@ -271,141 +335,167 @@ Please check:
         : theme === 'dark' ? '#2d2d2d' : '#fff',
       color: theme === 'dark' ? '#fff' : '#000',
       cursor: 'pointer',
+      padding: '12px 16px',
     }),
     singleValue: (base) => ({
       ...base,
       color: theme === 'dark' ? '#fff' : '#000',
+      fontWeight: '600',
     }),
   };
 
   return (
     <div className={`${styles.container} ${styles[theme]}`}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '1rem',
-        }}
-      >
-        <h1>{greeting} 👨‍💻</h1>
-
+      {/* Header with Theme Toggle */}
+      <div className={styles.header}>
+        <div className={styles.headerLeft}>
+          <h1 className={styles.title}>{greeting}</h1>
+          <p className={styles.subtitle}>Write, run, and experiment with code in multiple languages</p>
+        </div>
         <button
           onClick={toggleTheme}
           aria-label="Toggle theme"
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            color: 'inherit',
-            fontSize: '1.5rem',
-          }}
+          className={styles.themeToggle}
         >
           {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
         </button>
       </div>
 
       {/* Connection Status */}
-      <div style={{ 
-        marginBottom: '1rem', 
-        padding: '0.5rem 1rem', 
-        backgroundColor: getConnectionStatusColor(),
-        color: 'white',
-        borderRadius: '5px',
-        fontSize: '0.9rem',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem'
-      }}>
-        <div style={{
-          width: '8px',
-          height: '8px',
-          borderRadius: '50%',
-          backgroundColor: 'white'
-        }}></div>
-        {getConnectionStatusText()}
+      <div className={`${styles.connectionStatus} ${styles[`status-${connectionStatus}`]}`}>
+        <div className={styles.statusDot}></div>
+        <span>{getConnectionStatusText()}</span>
       </div>
 
-      <div className={styles.controls}>
-        <label className={styles.label}>Language:</label>
-        <div style={{ maxWidth: 'fit-content' }}>
+      {/* Language Selection */}
+      <div className={styles.languageSection}>
+        <label className={styles.label}>Programming Language:</label>
+        <div className={styles.selectWrapper}>
           <Select
             options={languageOptions}
             value={languageOptions.find((opt) => opt.value === language)}
             onChange={(selected) => setLanguage(selected.value)}
             styles={customSelectStyles}
             isSearchable={false}
+            placeholder="Select language..."
           />
         </div>
       </div>
 
-      <div style={{ marginTop: '1rem' }}>
-        <textarea
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          placeholder="Write your code here..."
-          rows={10}
-          cols={60}
-          className={`${styles.textarea} ${theme === 'dark' ? styles.darkTextArea : ''}`}
-          disabled={isRunning}
-        />
-        <div style={{ 
-          marginTop: '0.5rem', 
-          fontSize: '0.8rem', 
-          color: theme === 'dark' ? '#aaa' : '#666' 
-        }}>
-          {code.length}/10,000 characters
+      {/* Code Editor Section */}
+      <div className={styles.editorSection}>
+        <div className={styles.editorHeader}>
+          <h3>Code Editor</h3>
+          <div className={styles.characterCount}>
+            {code.length}/10,000 characters
+          </div>
+        </div>
+        
+        <div className={styles.codeEditor}>
+          <SyntaxHighlighter
+            language={language === 'c++' ? 'cpp' : language}
+            style={theme === 'dark' ? tomorrowNight : tomorrow}
+            customStyle={{
+              margin: 0,
+              borderRadius: '8px',
+              fontSize: '14px',
+              lineHeight: '1.5',
+              minHeight: '300px',
+            }}
+            showLineNumbers={true}
+            wrapLines={true}
+          >
+            {code || '// Start coding here...'}
+          </SyntaxHighlighter>
+          
+          <textarea
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            placeholder="Write your code here..."
+            className={styles.hiddenTextarea}
+            disabled={isRunning}
+            spellCheck={false}
+          />
         </div>
       </div>
 
-      <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+      {/* Action Buttons */}
+      <div className={styles.actionButtons}>
         <button 
           onClick={handleRun} 
-          className={styles.runButton}
+          className={`${styles.runButton} ${isRunning ? styles.running : ''}`}
           disabled={isRunning || !code.trim() || connectionStatus === 'disconnected'}
         >
-          {isRunning ? 'Running...' : 'Run Code'}
+          {isRunning ? (
+            <>
+              <RotateCcw size={16} className={styles.spinning} />
+              Running...
+            </>
+          ) : (
+            <>
+              <Play size={16} />
+              Run Code
+            </>
+          )}
         </button>
+        
         <button 
           onClick={handleLoadExample}
-          style={{
-            padding: '0.6rem 1.2rem',
-            fontWeight: 'bold',
-            backgroundColor: '#28a745',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            transition: 'background 0.3s ease',
-          }}
+          className={styles.exampleButton}
           disabled={isRunning}
         >
+          <FileText size={16} />
           Load Example
         </button>
+        
         <button 
           onClick={handleClear}
-          style={{
-            padding: '0.6rem 1.2rem',
-            fontWeight: 'bold',
-            backgroundColor: '#6c757d',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            transition: 'background 0.3s ease',
-          }}
+          className={styles.clearButton}
           disabled={isRunning}
         >
+          <RotateCcw size={16} />
           Clear
         </button>
       </div>
 
+      {/* Output Section */}
       {output && (
-        <div className={`${styles.output} ${theme === 'dark' ? styles.darkOutput : ''} ${hasError ? styles.error : ''}`}>
-          <h3>{hasError ? 'Error:' : 'Output:'}</h3>
-          <pre>{output}</pre>
+        <div className={`${styles.output} ${hasError ? styles.error : styles.success}`}>
+          <div className={styles.outputHeader}>
+            <h3>
+              {hasError ? (
+                <>
+                  <AlertCircle size={20} />
+                  Error
+                </>
+              ) : (
+                <>
+                  <CheckCircle size={20} />
+                  Output
+                </>
+              )}
+            </h3>
+            {executionTime && !hasError && (
+              <span className={styles.executionTime}>
+                <Zap size={14} />
+                {executionTime}ms
+              </span>
+            )}
+          </div>
+          <pre className={styles.outputContent}>{output}</pre>
         </div>
       )}
+
+      {/* Language Info */}
+      <div className={styles.languageInfo}>
+        <h4>Current Language: {getLanguageLabel(language)}</h4>
+        <p>
+          {language === 'python' && 'Python is great for beginners and data science!'}
+          {language === 'javascript' && 'JavaScript powers the modern web!'}
+          {language === 'java' && 'Java is perfect for enterprise applications!'}
+          {language === 'c++' && 'C++ gives you low-level control and high performance!'}
+        </p>
+      </div>
     </div>
   );
 }
