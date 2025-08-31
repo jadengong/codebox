@@ -1,45 +1,115 @@
 const express = require('express');
-const { runCodeInDocker } = require('../codeExecution');
+const { runCodeInDocker, cleanupTempFiles } = require('../codeExecution');
 const router = express.Router();
 
+// Health check endpoint
+router.get('/health', (req, res) => {
+  res.json({ 
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+    supportedLanguages: ['python', 'javascript', 'java', 'cpp']
+  });
+});
 
 // Handle GET request to test API
 router.get('/', (req, res) => {
-  res.json({ message: 'Welcome to the code execution sandbox API!' });
+  res.json({ 
+    message: 'Welcome to the code execution sandbox API!',
+    supportedLanguages: ['python', 'javascript', 'java', 'cpp'],
+    endpoints: {
+      'GET /health': 'Health check and system status',
+      'POST /execute': 'Execute code in the specified language',
+      'GET /': 'API information'
+    }
+  });
 });
 
 // Handle POST /api/execute
 router.post('/execute', async (req, res) => {
   const { code, language } = req.body;
 
-  if (code) {
-    try {
-      // Simulate code execution (placeholder)
-      const result = await runCodeInDocker(code, language);
+  // Input validation
+  if (!code || typeof code !== 'string' || code.trim().length === 0) {
+    return res.status(400).json({ 
+      error: 'Code is required and must be a non-empty string',
+      received: { code: code || null, language: language || null }
+    });
+  }
 
-      res.json({
-        message: 'Code execution started.',
-        code,
-        language,
-        result
+  if (!language || typeof language !== 'string') {
+    return res.status(400).json({ 
+      error: 'Language must be specified',
+      received: { code: code.trim(), language: language || null }
+    });
+  }
+
+  // Trim the code to remove unnecessary whitespace
+  const trimmedCode = code.trim();
+  
+  // Check for reasonable code length (prevent abuse)
+  if (trimmedCode.length > 10000) {
+    return res.status(400).json({ 
+      error: 'Code is too long. Maximum length is 10,000 characters.',
+      received: { codeLength: trimmedCode.length, language }
+    });
+  }
+
+  try {
+    console.log(`[API] Executing ${language} code (${trimmedCode.length} chars)`);
+    
+    const result = await runCodeInDocker(trimmedCode, language);
+
+    res.json({
+      success: true,
+      message: 'Code executed successfully',
+      result: result,
+      metadata: {
+        language: language,
+        codeLength: trimmedCode.length,
+        timestamp: new Date().toISOString()
+      }
+    });
+
+  } catch (error) {
+    console.error('[API] Execution error:', error);
+    
+    // Handle specific error types
+    if (error.message.includes('Unsupported language')) {
+      return res.status(400).json({ 
+        error: error.message,
+        supportedLanguages: ['python', 'javascript', 'java', 'cpp']
       });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal server error' });
     }
-  } else {
-    res.status(400).json({ error: 'No code provided.' });
+    
+    if (error.message.includes('Code must be')) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    // Generic server error
+    res.status(500).json({ 
+      error: 'Internal server error during code execution',
+      details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later'
+    });
   }
 });
 
-// Handle PUT request
-router.put('/update', (req, res) => {
-  res.json({ message: 'Update request received!' });
-});
-
-// Handle DELETE request
-router.delete('/delete', (req, res) => {
-  res.json({ message: 'Delete request received!' });
+// Manual cleanup endpoint (for admin use)
+router.post('/cleanup', (req, res) => {
+  try {
+    cleanupTempFiles();
+    res.json({ 
+      message: 'Cleanup initiated',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('[API] Cleanup error:', error);
+    res.status(500).json({ 
+      error: 'Failed to initiate cleanup',
+      details: process.env.NODE_ENV === 'development' ? error.message : 'Internal error'
+    });
+  }
 });
 
 module.exports = router;

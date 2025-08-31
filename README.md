@@ -25,7 +25,7 @@ Users can write code in the browser, select a language, and get real-time output
 |-------------|----------------------|
 | Frontend     | React + CSS          |
 | Backend      | Node.js + Express    |
-| Execution    | Docker (`python:3.11`, `node:20`, `openjdk:17`, `gcc:13`) |
+| Execution    | Docker (`python:3.11-slim`, `node:20-slim`, `openjdk:17-slim`, `gcc:13-slim`) |
 | Code Handling | `fs`, `uuid`, `child_process` |
 
 --- 
@@ -37,7 +37,6 @@ Users can write code in the browser, select a language, and get real-time output
 3. Docker runs the code in a secure, language-specific container.
 4. The output or error is captured and returned to the frontend.
 5. The frontend displays the result in the browser.
-
 
 ---
 
@@ -81,6 +80,21 @@ Start the frontend server (from `/client`):
 cd client
 npm start
 ```
+
+## Testing
+
+Test the core functionality:
+
+```bash
+node test-core.js
+```
+
+## API Endpoints
+
+- `GET /` - API information
+- `GET /api/health` - Health check
+- `POST /api/execute` - Execute code
+- `POST /api/cleanup` - Manual cleanup
 
 
 

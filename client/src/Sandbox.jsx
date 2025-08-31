@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import styles from './Sandbox.module.css';
 import { Sun, Moon } from 'lucide-react';
@@ -10,12 +10,102 @@ function Sandbox() {
   const [code, setCode] = useState('');
   const [output, setOutput] = useState('');
   const [theme, setTheme] = useState('light');
+  const [isRunning, setIsRunning] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState('unknown');
+
+  // Default code examples for each language
+  const codeExamples = {
+    python: `print("Hello, World!")
+print("Welcome to Python!")
+
+# Calculate the sum of numbers 1 to 10
+sum = 0
+for i in range(1, 11):
+    sum += i
+print(f"Sum of 1 to 10: {sum}")`,
+    
+    javascript: `console.log("Hello, World!");
+console.log("Welcome to JavaScript!");
+
+// Calculate the sum of numbers 1 to 10
+let sum = 0;
+for (let i = 1; i <= 10; i++) {
+    sum += i;
+}
+console.log(\`Sum of 1 to 10: \${sum}\`);`,
+    
+    java: `System.out.println("Hello, World!");
+System.out.println("Welcome to Java!");
+
+// Calculate the sum of numbers 1 to 10
+int sum = 0;
+for (int i = 1; i <= 10; i++) {
+    sum += i;
+}
+System.out.println("Sum of 1 to 10: " + sum);`,
+    
+    'c++': `cout << "Hello, World!" << endl;
+cout << "Welcome to C++!" << endl;
+
+// Calculate the sum of numbers 1 to 10
+int sum = 0;
+for (int i = 1; i <= 10; i++) {
+    sum += i;
+}
+cout << "Sum of 1 to 10: " << sum << endl;`
+  };
+
+  // Check backend connection on component mount
+  useEffect(() => {
+    checkBackendConnection();
+  }, []);
+
+  // Load default code when language changes
+  useEffect(() => {
+    if (!code || code.trim() === '') {
+      setCode(codeExamples[language] || '');
+    }
+  }, [language]);
+
+  const checkBackendConnection = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/health');
+      if (response.ok) {
+        setConnectionStatus('connected');
+      } else {
+        setConnectionStatus('error');
+      }
+    } catch (err) {
+      setConnectionStatus('disconnected');
+    }
+  };
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
+  const validateCode = () => {
+    if (!code.trim()) {
+      setOutput('Please enter some code to run.');
+      setHasError(true);
+      return false;
+    }
+    
+    if (code.trim().length > 10000) {
+      setOutput('Code is too long. Maximum length is 10,000 characters.');
+      setHasError(true);
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleRun = async () => {
+    if (!validateCode()) return;
+    
+    setIsRunning(true);
+    setHasError(false);
     setOutput('Running...');
 
     try {
@@ -24,19 +114,56 @@ function Sandbox() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ code, language }),
+        body: JSON.stringify({ code: code.trim(), language }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setOutput(data.result);
+        setOutput(data.result || 'Code executed successfully with no output.');
+        setHasError(false);
+        setConnectionStatus('connected');
       } else {
         setOutput(data.error || 'Something went wrong.');
+        setHasError(true);
       }
     } catch (err) {
       console.error(err);
-      setOutput('Failed to connect to backend.');
+      setOutput('Failed to connect to backend. Please make sure the server is running.');
+      setHasError(true);
+      setConnectionStatus('disconnected');
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
+  const handleClear = () => {
+    setCode('');
+    setOutput('');
+    setHasError(false);
+  };
+
+  const handleLoadExample = () => {
+    setCode(codeExamples[language] || '');
+    setOutput('');
+    setHasError(false);
+  };
+
+  const getConnectionStatusColor = () => {
+    switch (connectionStatus) {
+      case 'connected': return '#28a745';
+      case 'disconnected': return '#dc3545';
+      case 'error': return '#ffc107';
+      default: return '#6c757d';
+    }
+  };
+
+  const getConnectionStatusText = () => {
+    switch (connectionStatus) {
+      case 'connected': return 'Backend Connected';
+      case 'disconnected': return 'Backend Disconnected';
+      case 'error': return 'Backend Error';
+      default: return 'Checking Connection...';
     }
   };
 
@@ -105,6 +232,27 @@ function Sandbox() {
         </button>
       </div>
 
+      {/* Connection Status */}
+      <div style={{ 
+        marginBottom: '1rem', 
+        padding: '0.5rem 1rem', 
+        backgroundColor: getConnectionStatusColor(),
+        color: 'white',
+        borderRadius: '5px',
+        fontSize: '0.9rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem'
+      }}>
+        <div style={{
+          width: '8px',
+          height: '8px',
+          borderRadius: '50%',
+          backgroundColor: 'white'
+        }}></div>
+        {getConnectionStatusText()}
+      </div>
+
       <div className={styles.controls}>
         <label className={styles.label}>Language:</label>
         <div style={{ maxWidth: 'fit-content' }}>
@@ -126,16 +274,62 @@ function Sandbox() {
           rows={10}
           cols={60}
           className={`${styles.textarea} ${theme === 'dark' ? styles.darkTextArea : ''}`}
+          disabled={isRunning}
         />
+        <div style={{ 
+          marginTop: '0.5rem', 
+          fontSize: '0.8rem', 
+          color: theme === 'dark' ? '#aaa' : '#666' 
+        }}>
+          {code.length}/10,000 characters
+        </div>
       </div>
 
-      <div style={{ marginTop: '1rem' }}>
-        <button onClick={handleRun}>Run Code</button>
+      <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <button 
+          onClick={handleRun} 
+          className={styles.runButton}
+          disabled={isRunning || !code.trim() || connectionStatus === 'disconnected'}
+        >
+          {isRunning ? 'Running...' : 'Run Code'}
+        </button>
+        <button 
+          onClick={handleLoadExample}
+          style={{
+            padding: '0.6rem 1.2rem',
+            fontWeight: 'bold',
+            backgroundColor: '#28a745',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            transition: 'background 0.3s ease',
+          }}
+          disabled={isRunning}
+        >
+          Load Example
+        </button>
+        <button 
+          onClick={handleClear}
+          style={{
+            padding: '0.6rem 1.2rem',
+            fontWeight: 'bold',
+            backgroundColor: '#6c757d',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            transition: 'background 0.3s ease',
+          }}
+          disabled={isRunning}
+        >
+          Clear
+        </button>
       </div>
 
       {output && (
-        <div className={`${styles.output} ${theme === 'dark' ? styles.darkOutput : ''}`}>
-          <h3>Output:</h3>
+        <div className={`${styles.output} ${theme === 'dark' ? styles.darkOutput : ''} ${hasError ? styles.error : ''}`}>
+          <h3>{hasError ? 'Error:' : 'Output:'}</h3>
           <pre>{output}</pre>
         </div>
       )}

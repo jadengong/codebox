@@ -17,66 +17,17 @@
     color: #f0f0f0;
 }
 
-.textarea {
-    font-family: monospace;
-    padding: 1rem;
-    border: 1px solid #ccc;
-    background-color: #ffffff;
-    color: #000000;
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
 }
 
-.darkTextArea {
-    background-color: #2d2d2d;
-    border-color: #555;
-    color: #f0f0f0;
-}
-
-.output {
-    margin-top: 2rem;
-    background-color: #f0f0f0;
-    padding: 1rem;
-    border-radius: 8px;
-    color: #000;
-}
-
-.darkOutput {
-    background-color: #2a2a2a;
-    color: #f0f0f0;
-}
-
-/* styling dropdown */
-
-.select {
-    padding: 0.5rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    background-color: inherit;
+.label {
+    font-weight: 600;
     color: inherit;
 }
-
-.darkSelect {
-    border-color: #555;
-}
-
-
-/* styling run button */
-
-.runButton {
-    padding: 0.6rem 1.2rem;
-    font-weight: bold;
-    background-color: #007acc;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.runButton:hover {
-    background-color: #005fa3;
-}
-
-/* style the text area */
 
 .textarea {
     font-family: monospace;
@@ -86,6 +37,9 @@
     background-color: #ffffff;
     color: #000000;
     outline: none;
+    width: 100%;
+    resize: vertical;
+    min-height: 200px;
 }
 
 .darkTextArea {
@@ -99,9 +53,60 @@
     box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.4);
 }
 
-/* transition to output box */
+.runButton {
+    padding: 0.6rem 1.2rem;
+    font-weight: bold;
+    background-color: #007acc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    font-size: 1rem;
+}
+
+.runButton:hover {
+    background-color: #005fa3;
+}
+
+.runButton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
 .output {
+    margin-top: 2rem;
+    background-color: #f0f0f0;
+    padding: 1rem;
+    border-radius: 8px;
+    color: #000;
     transition: all 0.2s ease-in-out;
+    border: 1px solid #ddd;
+}
+
+.darkOutput {
+    background-color: #2a2a2a;
+    color: #f0f0f0;
+    border-color: #555;
+}
+
+.output pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: monospace;
+    font-size: 0.9rem;
+}
+
+.error {
+    color: #d32f2f;
+    background-color: #ffebee;
+    border-color: #f44336;
+}
+
+.dark .error {
+    background-color: #3e1e1e;
+    border-color: #f44336;
 }
 
 
