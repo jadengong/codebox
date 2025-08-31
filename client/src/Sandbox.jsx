@@ -283,9 +283,22 @@ print(greet("Developer"))`
     checkBackendConnection();
   }, []);
 
-  // Load default code when language changes
+  // Watch for when code becomes empty and set isCleared flag
   useEffect(() => {
     if ((!code || code.trim() === '') && !isCleared) {
+      console.log('Code became empty, setting isCleared to true');
+      setIsCleared(true);
+    }
+  }, [code, isCleared]);
+
+  // Load default code when language changes
+  useEffect(() => {
+    // Only auto-load example code if:
+    // 1. The code is empty AND
+    // 2. The user hasn't intentionally cleared it AND
+    // 3. We're not in the middle of clearing
+    if ((!code || code.trim() === '') && !isCleared) {
+      console.log('Auto-loading example code for language:', language);
       setCode(codeExamples[language] || '');
     }
   }, [language, code, codeExamples, isCleared]);
@@ -465,11 +478,14 @@ Please check:
 
   const handleClear = () => {
     console.log('Clear button clicked, clearing code...');
+    // Set the cleared flag first to prevent auto-loading
     setIsCleared(true);
+    // Clear all the states
     setCode('');
     setOutput('');
     setHasError(false);
     setExecutionTime(null);
+    // Force editor re-render to ensure it's properly cleared
     setEditorKey(prev => prev + 1);
     console.log('Code state cleared, new code value:', '');
   };
@@ -764,7 +780,18 @@ Please check:
             height="100%"
             language={getMonacoLanguage(language)}
             value={code}
-            onChange={(value) => setCode(value || '')}
+            onChange={(value) => {
+              const newValue = value || '';
+              console.log('Editor onChange:', { newValue, length: newValue.length });
+              setCode(newValue);
+              
+              // If the user manually clears the editor (Ctrl+A + Backspace), 
+              // we should also set isCleared to true
+              if (newValue === '' && !isCleared) {
+                console.log('Editor manually cleared, setting isCleared to true');
+                setIsCleared(true);
+              }
+            }}
             theme={theme === 'dark' ? 'vs-dark' : 'vs'}
             options={{
               minimap: { enabled: false },
