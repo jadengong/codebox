@@ -71,20 +71,58 @@ cout << "Sum of 1 to 10: " << sum << endl;`
   const checkBackendConnection = async () => {
     try {
       console.log('[Frontend] Checking backend connection...');
-      const response = await fetch('/api/health');
-      console.log('[Frontend] Backend response:', response.status, response.ok);
       
-      if (response.ok) {
-        const data = await response.json();
-        console.log('[Frontend] Backend data:', data);
+      // Try multiple endpoints to determine connection status
+      const healthResponse = await fetch('/api/health', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      console.log('[Frontend] Health response:', healthResponse.status, healthResponse.ok);
+      
+      if (healthResponse.ok) {
+        const data = await healthResponse.json();
+        console.log('[Frontend] Health data:', data);
         setConnectionStatus('connected');
       } else {
-        console.log('[Frontend] Backend error status:', response.status);
-        setConnectionStatus('error');
+        console.log('[Frontend] Health error status:', healthResponse.status);
+        
+        // Try the main API endpoint as fallback
+        try {
+          const apiResponse = await fetch('/api', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          
+          if (apiResponse.ok) {
+            console.log('[Frontend] API endpoint working, setting connected');
+            setConnectionStatus('connected');
+          } else {
+            console.log('[Frontend] API endpoint also failed:', apiResponse.status);
+            setConnectionStatus('error');
+          }
+        } catch (apiErr) {
+          console.log('[Frontend] API endpoint also failed:', apiErr);
+          setConnectionStatus('error');
+        }
       }
     } catch (err) {
       console.error('[Frontend] Connection error:', err);
-      setConnectionStatus('disconnected');
+      
+      // Check if we're on Vercel by looking at the hostname
+      const isVercel = window.location.hostname.includes('vercel.app') || 
+                       window.location.hostname.includes('vercel.com');
+      
+      if (isVercel) {
+        console.log('[Frontend] Running on Vercel, connection issue detected');
+        setConnectionStatus('error');
+      } else {
+        setConnectionStatus('disconnected');
+      }
     }
   };
 
@@ -117,6 +155,7 @@ cout << "Sum of 1 to 10: " << sum << endl;`
 
     try {
       console.log('[Frontend] Executing code:', { language, codeLength: code.trim().length });
+      
       const response = await fetch('/api/execute', {
         method: 'POST',
         headers: {
@@ -125,20 +164,45 @@ cout << "Sum of 1 to 10: " << sum << endl;`
         body: JSON.stringify({ code: code.trim(), language }),
       });
 
-      const data = await response.json();
-      console.log('[Frontend] Execute response:', response.status, data);
+      console.log('[Frontend] Execute response:', response.status, response.ok);
 
       if (response.ok) {
+        const data = await response.json();
+        console.log('[Frontend] Execute data:', data);
         setOutput(data.result || 'Code executed successfully with no output.');
         setHasError(false);
         setConnectionStatus('connected');
       } else {
-        setOutput(data.error || 'Something went wrong.');
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        console.log('[Frontend] Execute error data:', errorData);
+        setOutput(errorData.error || `HTTP ${response.status}: Something went wrong.`);
         setHasError(true);
+        
+        // Update connection status based on error
+        if (response.status >= 500) {
+          setConnectionStatus('error');
+        }
       }
     } catch (err) {
       console.error('[Frontend] Execute error:', err);
-      setOutput('Failed to connect to backend. Please make sure the server is running.');
+      
+      // Check if we're on Vercel
+      const isVercel = window.location.hostname.includes('vercel.app') || 
+                       window.location.hostname.includes('vercel.com');
+      
+      if (isVercel) {
+        setOutput(`Failed to connect to Vercel backend. This might be a deployment issue.
+        
+Error details: ${err.message}
+
+Please check:
+1. Your Vercel deployment is complete
+2. API routes are properly configured
+3. Try refreshing the page`);
+      } else {
+        setOutput('Failed to connect to backend. Please make sure the server is running.');
+      }
+      
       setHasError(true);
       setConnectionStatus('disconnected');
     } finally {

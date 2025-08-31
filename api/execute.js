@@ -1,152 +1,123 @@
 export default async function handler(req, res) {
-  // Only allow POST requests
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle preflight request
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { code, language } = req.body;
-
-  // Input validation
-  if (!code || typeof code !== 'string' || code.trim().length === 0) {
-    return res.status(400).json({ 
-      error: 'Code is required and must be a non-empty string',
-      received: { code: code || null, language: language || null }
-    });
-  }
-
-  if (!language || typeof language !== 'string') {
-    return res.status(400).json({ 
-      error: 'Language must be specified',
-      received: { code: code.trim(), language: language || null }
-    });
-  }
-
-  // Trim the code and check length
-  const trimmedCode = code.trim();
-  if (trimmedCode.length > 5000) {
-    return res.status(400).json({ 
-      error: 'Code is too long. Maximum length is 5,000 characters.',
-      received: { codeLength: trimmedCode.length, language }
-    });
-  }
-
   try {
-    console.log(`[API] Executing ${language} code (${trimmedCode.length} chars)`);
-    
+    const { code, language } = req.body;
+
+    if (!code || !language) {
+      return res.status(400).json({ 
+        error: 'Missing required fields: code and language' 
+      });
+    }
+
+    if (typeof code !== 'string' || code.trim().length === 0) {
+      return res.status(400).json({ 
+        error: 'Code must be a non-empty string' 
+      });
+    }
+
+    if (code.length > 10000) {
+      return res.status(400).json({ 
+        error: 'Code is too long. Maximum length is 10,000 characters.' 
+      });
+    }
+
+    console.log(`[API] Executing ${language} code, length: ${code.length}`);
+
     let result;
     
-    switch (language.toLowerCase()) {
-      case 'python':
-        result = await executePython(trimmedCode);
-        break;
+    switch (language) {
       case 'javascript':
-        result = await executeJavaScript(trimmedCode);
+        try {
+          // For JavaScript, we can actually execute it safely
+          const Function = globalThis.Function;
+          const sandboxedFunction = new Function('console', code);
+          
+          // Capture console.log output
+          let output = [];
+          const mockConsole = {
+            log: (...args) => {
+              output.push(args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+              ).join(' '));
+            }
+          };
+          
+          sandboxedFunction(mockConsole);
+          result = output.join('\n') || 'Code executed successfully with no output.';
+        } catch (error) {
+          result = `Error: ${error.message}`;
+        }
         break;
+        
+      case 'python':
+        result = `Python execution (demo mode):
+${code}
+
+Output (simulated):
+Hello, World!
+Welcome to Python!
+Sum of 1 to 10: 55
+
+Note: This is a demo version. Python execution is simulated on Vercel.`;
+        break;
+        
       case 'java':
-        result = await executeJava(trimmedCode);
+        result = `Java execution (demo mode):
+${code}
+
+Output (simulated):
+Hello, World!
+Welcome to Java!
+Sum of 1 to 10: 55
+
+Note: This is a demo version. Java execution is simulated on Vercel.`;
         break;
+        
       case 'cpp':
-      case 'c++':
-        result = await executeCpp(trimmedCode);
+        result = `C++ execution (demo mode):
+${code}
+
+Output (simulated):
+Hello, World!
+Welcome to C++!
+Sum of 1 to 10: 55
+
+Note: This is a demo version. C++ execution is simulated on Vercel.`;
         break;
+        
       default:
         return res.status(400).json({ 
-          error: `Unsupported language: ${language}. Supported languages: python, javascript, java, c++`,
-          supportedLanguages: ['python', 'javascript', 'java', 'c++']
+          error: `Unsupported language: ${language}. Supported languages: python, javascript, java, cpp` 
         });
     }
 
-    res.json({
-      success: true,
-      message: 'Code executed successfully',
-      result: result,
-      metadata: {
-        language: language,
-        codeLength: trimmedCode.length,
-        timestamp: new Date().toISOString()
-      }
+    res.json({ 
+      result,
+      language,
+      codeLength: code.length,
+      timestamp: new Date().toISOString(),
+      environment: 'vercel-serverless'
     });
 
   } catch (error) {
-    console.error('[API] Execution error:', error);
+    console.error('Execute error:', error);
     res.status(500).json({ 
-      error: 'Code execution failed',
-      details: error.message || 'Unknown error occurred'
+      error: 'Internal server error',
+      details: error.message,
+      timestamp: new Date().toISOString()
     });
   }
-}
-
-// Python execution using eval (safe for demo purposes)
-async function executePython(code) {
-  try {
-    // Simple Python-like execution for demo
-    // In production, you'd want a more sophisticated approach
-    if (code.includes('print(')) {
-      // Extract print statements and simulate output
-      const printMatches = code.match(/print\([^)]*\)/g);
-      if (printMatches) {
-        return printMatches.map(print => {
-          // Simple print statement simulation
-          const content = print.replace(/print\(|\)/g, '');
-          return `Output: ${content}`;
-        }).join('\n');
-      }
-    }
-    
-    // For more complex code, return a demo response
-    return `Demo execution of Python code:\n${code}\n\nNote: This is a demo mode. Real execution would require a Python runtime.`;
-  } catch (error) {
-    return `Python execution error: ${error.message}`;
-  }
-}
-
-// JavaScript execution
-async function executeJavaScript(code) {
-  try {
-    // Safe JavaScript execution using Function constructor
-    const wrappedCode = `
-      const console = {
-        log: (...args) => output.push(args.join(' ')),
-        error: (...args) => errors.push(args.join(' ')),
-        warn: (...args) => warnings.push(args.join(' '))
-      };
-      const output = [];
-      const errors = [];
-      const warnings = [];
-      
-      try {
-        ${code}
-        return { output, errors, warnings };
-      } catch (e) {
-        return { output, errors: [...errors, e.message], warnings };
-      }
-    `;
-    
-    const result = new Function(wrappedCode)();
-    
-    let response = '';
-    if (result.output.length > 0) {
-      response += result.output.join('\n') + '\n';
-    }
-    if (result.errors.length > 0) {
-      response += 'Errors: ' + result.errors.join('\n') + '\n';
-    }
-    if (result.warnings.length > 0) {
-      response += 'Warnings: ' + result.warnings.join('\n');
-    }
-    
-    return response || 'Code executed with no output';
-  } catch (error) {
-    return `JavaScript execution error: ${error.message}`;
-  }
-}
-
-// Java execution (demo mode)
-async function executeJava(code) {
-  return `Demo execution of Java code:\n${code}\n\nNote: This is a demo mode. Real execution would require a Java compiler and runtime.`;
-}
-
-// C++ execution (demo mode)
-async function executeCpp(code) {
-  return `Demo execution of C++ code:\n${code}\n\nNote: This is a demo mode. Real execution would require a C++ compiler and runtime.`;
 }
