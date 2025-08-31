@@ -71,7 +71,7 @@ cout << "Sum of 1 to 10: " << sum << endl;`
   const checkBackendConnection = async () => {
     try {
       console.log('[Frontend] Checking backend connection...');
-      const response = await fetch('http://localhost:3000/api/health');
+      const response = await fetch('/api/health');
       console.log('[Frontend] Backend response:', response.status, response.ok);
       
       if (response.ok) {
@@ -117,7 +117,7 @@ cout << "Sum of 1 to 10: " << sum << endl;`
 
     try {
       console.log('[Frontend] Executing code:', { language, codeLength: code.trim().length });
-      const response = await fetch('http://localhost:3000/api/execute', {
+      const response = await fetch('/api/execute', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
