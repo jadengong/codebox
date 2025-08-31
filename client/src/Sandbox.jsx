@@ -718,145 +718,148 @@ Please check:
         </div>
       )}
 
-      {/* Code Editor Section */}
-      <div className={`${styles.editorSection} ${connectionStatus !== 'connected' ? styles.fullWidth : ''}`}>
-        <div className={styles.editorHeader}>
-          <h3>Code Editor</h3>
-          <div className={styles.editorInfo}>
-            <div className={styles.characterCount}>
-              {code.length}/10,000 characters
-            </div>
-            <div className={styles.resizeInfo}>
-              💡 Drag to resize • {editorDimensions.width}×{editorDimensions.height}px
+      {/* Main Editor Container - Wraps editor, language selector, and action buttons */}
+      <div className={styles.editorContainer}>
+        {/* Code Editor Section */}
+        <div className={`${styles.editorSection} ${connectionStatus !== 'connected' ? styles.fullWidth : ''}`}>
+          <div className={styles.editorHeader}>
+            <h3>Code Editor</h3>
+            <div className={styles.editorInfo}>
+              <div className={styles.characterCount}>
+                {code.length}/10,000 characters
+              </div>
+              <div className={styles.resizeInfo}>
+                💡 Drag to resize • {editorDimensions.width}×{editorDimensions.height}px
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div className={styles.codeEditor}>
-          <Editor
-            height="100%"
-            language={getMonacoLanguage(language)}
-            value={code}
-            onChange={(value) => {
-              const newValue = value || '';
-              console.log('Editor onChange:', { newValue, length: newValue.length });
-              setCode(newValue);
-              
-              // If the user manually clears the editor (Ctrl+A + Backspace), 
-              // we should also set isCleared to true
-              if (newValue === '' && !isCleared) {
-                console.log('Editor manually cleared, setting isCleared to true');
-                setIsCleared(true);
-              }
-            }}
-            theme={theme === 'dark' ? 'vs-dark' : 'vs'}
-            options={{
-              minimap: { enabled: false },
-              fontSize: 14,
-              lineHeight: 1.5,
-              wordWrap: 'on',
-              scrollBeyondLastLine: false,
-              padding: { top: 10, bottom: 10 },
-              overviewRulerBorder: false,
-              overviewRulerLanes: 0,
-              scrollbar: {
-                horizontal: 'auto',
-                vertical: 'auto',
-              },
-              readOnly: isRunning,
-              lineNumbers: 'on',
-              roundedSelection: false,
-              automaticLayout: true,
-              fixedOverflowWidgets: true,
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Language Selection - Now positioned above the action buttons */}
-      {connectionStatus === 'connected' && (
-        <div className={styles.languageSection}>
-          <label className={styles.label}>Language:</label>
-          <div className={styles.selectWrapper}>
-            <Select
-              key={theme} // Force re-render on theme change
-              options={languageOptions}
-              value={languageOptions.find((opt) => opt.value === language)}
-              onChange={(selected) => {
-                console.log('Language selection changed:', selected);
-                console.log('Selected value:', selected?.value);
-                console.log('Current language state:', language);
-                if (selected && selected.value) {
-                  console.log('Setting language to:', selected.value);
-                  setIsCleared(false);
-                  setLanguage(selected.value);
-                  console.log('Language state after setLanguage:', selected.value);
-                } else {
-                  console.log('No valid selection:', selected);
+          
+          <div className={styles.codeEditor}>
+            <Editor
+              height="100%"
+              language={getMonacoLanguage(language)}
+              value={code}
+              onChange={(value) => {
+                const newValue = value || '';
+                console.log('Editor onChange:', { newValue, length: newValue.length });
+                setCode(newValue);
+                
+                // If the user manually clears the editor (Ctrl+A + Backspace), 
+                // we should also set isCleared to true
+                if (newValue === '' && !isCleared) {
+                  console.log('Editor manually cleared, setting isCleared to true');
+                  setIsCleared(true);
                 }
               }}
-              styles={customSelectStyles}
-              isSearchable={false}
-              placeholder="Select language..."
-              menuPlacement="bottom"
-              menuPosition="absolute"
-              closeMenuOnSelect={true}
-              blurInputOnSelect={true}
-              isClearable={false}
-              unstyled={false}
-              captureMenuScroll={false}
-              classNames={{
-                control: () => 'select-control',
-                menu: () => 'select-menu',
-                option: () => 'select-option',
+              theme={theme === 'dark' ? 'vs-dark' : 'vs'}
+              options={{
+                minimap: { enabled: false },
+                fontSize: 14,
+                lineHeight: 1.5,
+                wordWrap: 'on',
+                scrollBeyondLastLine: false,
+                padding: { top: 10, bottom: 10 },
+                overviewRulerBorder: false,
+                overviewRulerLanes: 0,
+                scrollbar: {
+                  horizontal: 'auto',
+                  vertical: 'auto',
+                },
+                readOnly: isRunning,
+                lineNumbers: 'on',
+                roundedSelection: false,
+                automaticLayout: true,
+                fixedOverflowWidgets: true,
               }}
-              onMenuOpen={() => {
-                console.log('Menu opened, current language:', language);
-                console.log('Available options:', languageOptions);
-              }}
-              onMenuClose={() => console.log('Menu closed')}
             />
           </div>
         </div>
-      )}
 
-      {/* Action Buttons */}
-      <div className={styles.actionButtons}>
-        <button 
-          onClick={handleRun} 
-          className={`${styles.runButton} ${isRunning ? styles.running : ''}`}
-          disabled={isRunning || !code.trim() || connectionStatus === 'disconnected'}
-        >
-          {isRunning ? (
-            <>
-              <LoadingSpinner size="small" color="white" />
-              Running...
-            </>
-          ) : (
-            <>
-              <Play size={16} />
-              Run
-            </>
-          )}
-        </button>
-        
-        <button 
-          onClick={handleLoadExample}
-          className={styles.exampleButton}
-          disabled={isRunning}
-        >
-          <FileText size={16} />
-          Load Example
-        </button>
-        
-        <button 
-          onClick={handleClear}
-          className={styles.clearButton}
-          disabled={isRunning}
-        >
-          <RotateCcw size={16} />
-          Clear
-        </button>
+        {/* Language Selection - Now positioned above the action buttons */}
+        {connectionStatus === 'connected' && (
+          <div className={styles.languageSection}>
+            <label className={styles.label}>Language:</label>
+            <div className={styles.selectWrapper}>
+              <Select
+                key={theme} // Force re-render on theme change
+                options={languageOptions}
+                value={languageOptions.find((opt) => opt.value === language)}
+                onChange={(selected) => {
+                  console.log('Language selection changed:', selected);
+                  console.log('Selected value:', selected?.value);
+                  console.log('Current language state:', language);
+                  if (selected && selected.value) {
+                    console.log('Setting language to:', selected.value);
+                    setIsCleared(false);
+                    setLanguage(selected.value);
+                    console.log('Language state after setLanguage:', selected.value);
+                  } else {
+                    console.log('No valid selection:', selected);
+                  }
+                }}
+                styles={customSelectStyles}
+                isSearchable={false}
+                placeholder="Select language..."
+                menuPlacement="bottom"
+                menuPosition="absolute"
+                closeMenuOnSelect={true}
+                blurInputOnSelect={true}
+                isClearable={false}
+                unstyled={false}
+                captureMenuScroll={false}
+                classNames={{
+                  control: () => 'select-control',
+                  menu: () => 'select-menu',
+                  option: () => 'select-option',
+                }}
+                onMenuOpen={() => {
+                  console.log('Menu opened, current language:', language);
+                  console.log('Available options:', languageOptions);
+                }}
+                onMenuClose={() => console.log('Menu closed')}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className={styles.actionButtons}>
+          <button 
+            onClick={handleRun} 
+            className={`${styles.runButton} ${isRunning ? styles.running : ''}`}
+            disabled={isRunning || !code.trim() || connectionStatus === 'disconnected'}
+          >
+            {isRunning ? (
+              <>
+                <LoadingSpinner size="small" color="white" />
+                Running...
+              </>
+            ) : (
+              <>
+                <Play size={16} />
+                Run
+              </>
+            )}
+          </button>
+          
+          <button 
+            onClick={handleLoadExample}
+            className={styles.exampleButton}
+            disabled={isRunning}
+          >
+            <FileText size={16} />
+            Load Example
+          </button>
+          
+          <button 
+            onClick={handleClear}
+            className={styles.clearButton}
+            disabled={isRunning}
+          >
+            <RotateCcw size={16} />
+            Clear
+          </button>
+        </div>
       </div>
 
       {/* Output Section */}
