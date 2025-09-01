@@ -10,8 +10,7 @@ Users can write code in the browser, select a language, and get real-time output
 - **Secure Docker-based execution**
   - Each submission runs in a short-lived container with no persistent state
 - **Multi-language support**
-  - Python, JavaScript, Java, and C++
-- **Auto-wrapping for Java & C++**
+  - Python and JavaScript
   - Write just `cout << "Hello";` or `System.out.println("Hi");`
 - **Temp file cleanup**
 - **Smart error formatting**
@@ -25,7 +24,7 @@ Users can write code in the browser, select a language, and get real-time output
 |-------------|----------------------|
 | Frontend     | React + CSS          |
 | Backend      | Node.js + Express    |
-| Execution    | Docker (`python:3.11-slim`, `node:20-slim`, `openjdk:17-slim`, `gcc:13-slim`) |
+| Execution    | Docker (`python:3.11-slim`, `node:20-slim`) |
 | Code Handling | `fs`, `uuid`, `child_process` |
 
 --- 
@@ -72,24 +71,11 @@ cd client
 npm install
 ```
 
-### 4. Install Python dependencies (Optional)
 
-If you want to run the Python backend or use Python tools:
-
-```bash
-# Install base requirements
-pip install -r requirements.txt
-
-# Install development dependencies
-pip install -r requirements-dev.txt
-
-# Install production dependencies only
-pip install -r requirements-prod.txt
-```
 
 ### 5. Start the backend and frontend 
 
-**Option 1: Use the dev setup script (Recommended)**
+**Option 1: Start with nodemon (Recommended)**
 ```bash
 npm run dev
 ```
@@ -110,23 +96,7 @@ npm start
 # API calls will be automatically proxied to backend
 ```
 
-## Python Dependencies
-
-The project includes several requirements files for different use cases:
-
-- **`requirements.txt`** - Base dependencies for development and production
-- **`requirements-dev.txt`** - Additional development tools, testing, and code quality tools
-- **`requirements-prod.txt`** - Minimal production dependencies only
-
-### Key Python Packages
-
-- **Flask** - Web framework for Python backend
-- **Docker** - Python Docker SDK for container management
-- **pytest** - Testing framework
-- **black** - Code formatting
-- **flake8** - Linting and style checking
-
-## Testing
+##Testing
 
 Test the core functionality:
 
@@ -140,11 +110,7 @@ npm test
 # Run frontend tests
 cd client && npm test
 
-# Test API endpoints manually
-node test-api.js
 
-# Test core functionality
-node test-core.js
 ```
 
 ## API Endpoints
@@ -165,11 +131,7 @@ node test-core.js
 
 ---
 
-## Development Tools
 
-- **`dev-setup.js`** - Automated development environment setup
-- **`test-api.js`** - Manual API endpoint testing
-- **`test-core.js`** - Core functionality testing
 - **`jest.setup.js`** - Jest testing configuration
 
 ---

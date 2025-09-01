@@ -21,7 +21,7 @@ function LandingPage() {
     {
       icon: <Code size={32} />,
       title: "Multi-Language Support",
-      description: "Write code in 12+ languages including Python, JavaScript, TypeScript, Java, C++, Rust, Go, and more with full syntax highlighting."
+      description: "Write code in Python and JavaScript with full syntax highlighting and real-time execution."
     },
     {
       icon: <Shield size={32} />,
@@ -52,17 +52,7 @@ function LandingPage() {
 
   const supportedLanguages = [
     { name: "Python", icon: "🐍", description: "Great for beginners and data science" },
-    { name: "JavaScript", icon: "🚀", description: "Power the modern web" },
-    { name: "TypeScript", icon: "📘", description: "JavaScript with static typing" },
-    { name: "Java", icon: "☕", description: "Enterprise applications and Android" },
-    { name: "Kotlin", icon: "🔷", description: "Modern, concise Java alternative" },
-    { name: "C++", icon: "⚡", description: "High-performance systems programming" },
-    { name: "C#", icon: "💎", description: "Microsoft's modern OOP language" },
-    { name: "Go", icon: "🦘", description: "Simple, fast concurrent programming" },
-    { name: "Rust", icon: "🦀", description: "Memory safety without GC" },
-    { name: "PHP", icon: "🐘", description: "Widely used for web development" },
-    { name: "Ruby", icon: "💎", description: "Emphasizes simplicity and productivity" },
-    { name: "Swift", icon: "🍎", description: "Apple's modern iOS language" }
+    { name: "JavaScript", icon: "🚀", description: "Power the modern web" }
   ];
 
   return (

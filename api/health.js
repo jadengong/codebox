@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       timestamp: new Date().toISOString(),
       uptime: process.uptime ? process.uptime() : 'N/A',
       memory: process.memoryUsage ? process.memoryUsage() : 'N/A',
-      supportedLanguages: ['python', 'javascript', 'typescript', 'java', 'kotlin', 'cpp', 'csharp', 'go', 'rust', 'php', 'ruby', 'swift'],
+      supportedLanguages: ['python', 'javascript'],
       environment: 'vercel-serverless',
       note: 'Running on Vercel serverless functions'
     });

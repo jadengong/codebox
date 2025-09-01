@@ -9,7 +9,7 @@ router.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     memory: process.memoryUsage(),
-    supportedLanguages: ['python', 'javascript', 'typescript', 'java', 'kotlin', 'cpp', 'csharp', 'go', 'rust', 'php', 'ruby', 'swift']
+    supportedLanguages: ['python', 'javascript']
   });
 });
 
@@ -17,7 +17,7 @@ router.get('/health', (req, res) => {
 router.get('/', (req, res) => {
   res.json({ 
     message: 'Welcome to the code execution sandbox API!',
-    supportedLanguages: ['python', 'javascript', 'typescript', 'java', 'kotlin', 'cpp', 'csharp', 'go', 'rust', 'php', 'ruby', 'swift'],
+    supportedLanguages: ['python', 'javascript'],
     endpoints: {
       'GET /health': 'Health check and system status',
       'POST /execute': 'Execute code in the specified language',
@@ -79,7 +79,7 @@ router.post('/execute', async (req, res) => {
     if (error.message.includes('Unsupported language')) {
       return res.status(400).json({ 
         error: error.message,
-        supportedLanguages: ['python', 'javascript', 'typescript', 'java', 'kotlin', 'cpp', 'csharp', 'go', 'rust', 'php', 'ruby', 'swift']
+        supportedLanguages: ['python', 'javascript']
       });
     }
     

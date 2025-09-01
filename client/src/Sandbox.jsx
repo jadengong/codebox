@@ -90,192 +90,7 @@ function greet(name) {
     return \`Hello, \${name}!\`;
 }
 
-console.log(greet("Developer"));`,
-    
-    typescript: `// Welcome to TypeScript! 📘
-console.log("Hello, World!");
-console.log("Welcome to TypeScript!");
-
-// Calculate the sum of numbers 1 to 10
-let sum: number = 0;
-for (let i: number = 1; i <= 10; i++) {
-    sum += i;
-}
-console.log(\`Sum of 1 to 10: \${sum}\`);
-
-// Simple function example with types
-function greet(name: string): string {
-    return \`Hello, \${name}!\`;
-}
-
-console.log(greet("Developer"));`,
-    
-    java: `// Welcome to Java! ☕
-System.out.println("Hello, World!");
-System.out.println("Welcome to Java!");
-
-// Calculate the sum of numbers 1 to 10
-int sum = 0;
-for (int i = 1; i <= 10; i++) {
-    sum += i;
-}
-System.out.println("Sum of 1 to 10: " + sum);
-
-// Simple method example
-String greet(String name) {
-    return "Hello, " + name + "!";
-}
-
-System.out.println(greet("Developer"));`,
-    
-    kotlin: `// Welcome to Kotlin! 🔷
-println("Hello, World!")
-println("Welcome to Kotlin!")
-
-// Calculate the sum of numbers 1 to 10
-val sum = (1..10).sum()
-println("Sum of 1 to 10: \$sum")
-
-// Simple function example
-fun greet(name: String): String {
-    return "Hello, \$name!"
-}
-
-println(greet("Developer"))`,
-    
-    'c++': `// Welcome to C++! ⚡
-#include <iostream>
-#include <string>
-using namespace std;
-
-int main() {
-    cout << "Hello, World!" << endl;
-    cout << "Welcome to C++!" << endl;
-    
-    // Calculate the sum of numbers 1 to 10
-    int sum = 0;
-    for (int i = 1; i <= 10; i++) {
-        sum += i;
-    }
-    cout << "Sum of 1 to 10: " << sum << endl;
-    
-    // Simple function example
-    string greet(string name) {
-        return "Hello, " + name + "!";
-    }
-    
-    cout << greet("Developer") << endl;
-    return 0;
-}`,
-    
-    csharp: `// Welcome to C#! 💎
-Console.WriteLine("Hello, World!");
-Console.WriteLine("Welcome to C#!");
-
-// Calculate the sum of numbers 1 to 10
-int sum = 0;
-for (int i = 1; i <= 10; i++) {
-    sum += i;
-}
-Console.WriteLine($"Sum of 1 to 10: {sum}");
-
-// Simple function example
-string Greet(string name) {
-    return $"Hello, {name}!";
-}
-
-Console.WriteLine(Greet("Developer"));`,
-    
-    go: `// Welcome to Go! 🦘
-package main
-
-import "fmt"
-
-func main() {
-    fmt.Println("Hello, World!")
-    fmt.Println("Welcome to Go!")
-    
-    // Calculate the sum of numbers 1 to 10
-    sum := 0
-    for i := 1; i <= 10; i++ {
-        sum += i
-    }
-    fmt.Printf("Sum of 1 to 10: %d\\n", sum)
-    
-    // Simple function example
-    greet := func(name string) string {
-        return fmt.Sprintf("Hello, %s!", name)
-    }
-    
-    fmt.Println(greet("Developer"))
-}`,
-    
-    rust: `// Welcome to Rust! 🦀
-fn main() {
-    println!("Hello, World!");
-    println!("Welcome to Rust!");
-    
-    // Calculate the sum of numbers 1 to 10
-    let sum: i32 = (1..=10).sum();
-    println!("Sum of 1 to 10: {}", sum);
-    
-    // Simple function example
-    fn greet(name: &str) -> String {
-        format!("Hello, {}!", name)
-    }
-    
-    println!("{}", greet("Developer"));
-}`,
-    
-    php: `<?php
-// Welcome to PHP! 🐘
-echo "Hello, World!\\n";
-echo "Welcome to PHP!\\n";
-
-// Calculate the sum of numbers 1 to 10
-$sum = 0;
-for ($i = 1; $i <= 10; $i++) {
-    $sum += $i;
-}
-echo "Sum of 1 to 10: " . $sum . "\\n";
-
-// Simple function example
-function greet($name) {
-    return "Hello, " . $name . "!";
-}
-
-echo greet("Developer") . "\\n";
-?>`,
-    
-    ruby: `# Welcome to Ruby! 💎
-puts "Hello, World!"
-puts "Welcome to Ruby!"
-
-# Calculate the sum of numbers 1 to 10
-sum = (1..10).sum
-puts "Sum of 1 to 10: #{sum}"
-
-# Simple function example
-def greet(name)
-  "Hello, #{name}!"
-end
-
-puts greet("Developer")`,
-    
-    swift: `// Welcome to Swift! 🍎
-print("Hello, World!")
-print("Welcome to Swift!")
-
-// Calculate the sum of numbers 1 to 10
-let sum = (1...10).reduce(0, +)
-print("Sum of 1 to 10: \\(sum)")
-
-// Simple function example
-func greet(name: String) -> String {
-    return "Hello, \\(name)!"
-}
-
-print(greet("Developer"))`
+console.log(greet("Developer"));`
   };
 
   // Check backend connection on component mount
@@ -515,66 +330,24 @@ Please check:
   };
 
   const getMonacoLanguage = (lang) => {
-    const languageMap = {
-      'c++': 'cpp',
-      'csharp': 'csharp',
-      'typescript': 'typescript',
-      'kotlin': 'kotlin',
-      'go': 'go',
-      'rust': 'rust',
-      'php': 'php',
-      'ruby': 'ruby',
-      'swift': 'swift'
-    };
-    return languageMap[lang] || lang;
+    return lang;
   };
 
   const getBackendLanguage = (lang) => {
-    const languageMap = {
-      'c++': 'cpp',
-      'csharp': 'csharp',
-      'typescript': 'typescript',
-      'kotlin': 'kotlin',
-      'go': 'go',
-      'rust': 'rust',
-      'php': 'php',
-      'ruby': 'ruby',
-      'swift': 'swift'
-    };
-    return languageMap[lang] || lang;
+    return lang;
   };
 
   const getLanguageLabel = (lang) => {
     const labels = {
       'python': '🐍 Python',
-      'javascript': '🚀 JavaScript',
-      'typescript': '📘 TypeScript',
-      'java': '☕ Java',
-      'kotlin': '🔷 Kotlin',
-      'c++': '⚡ C++',
-      'csharp': '💎 C#',
-      'go': '🦘 Go',
-      'rust': '🦀 Rust',
-      'php': '🐘 PHP',
-      'ruby': '💎 Ruby',
-      'swift': '🍎 Swift'
+      'javascript': '🚀 JavaScript'
     };
     return labels[lang] || lang;
   };
 
   const languageOptions = [
     { value: 'python', label: '🐍 Python' },
-    { value: 'javascript', label: '🚀 JavaScript' },
-    { value: 'typescript', label: '📘 TypeScript' },
-    { value: 'java', label: '☕ Java' },
-    { value: 'kotlin', label: '🔷 Kotlin' },
-    { value: 'c++', label: '⚡ C++' },
-    { value: 'csharp', label: '💎 C#' },
-    { value: 'go', label: '🦘 Go' },
-    { value: 'rust', label: '🦀 Rust' },
-    { value: 'php', label: '🐘 PHP' },
-    { value: 'ruby', label: '💎 Ruby' },
-    { value: 'swift', label: '🍎 Swift' }
+    { value: 'javascript', label: '🚀 JavaScript' }
   ];
 
   const customSelectStyles = {

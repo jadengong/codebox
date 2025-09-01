@@ -19,7 +19,7 @@ describe('API Routes', () => {
       expect(response.body).toHaveProperty('uptime');
       expect(response.body).toHaveProperty('memory');
       expect(response.body).toHaveProperty('supportedLanguages');
-      expect(response.body.supportedLanguages).toEqual(['python', 'javascript', 'typescript', 'java', 'kotlin', 'cpp', 'csharp', 'go', 'rust', 'php', 'ruby', 'swift']);
+      expect(response.body.supportedLanguages).toEqual(['python', 'javascript']);
     });
   });
 
@@ -32,7 +32,7 @@ describe('API Routes', () => {
       expect(response.body).toHaveProperty('message');
       expect(response.body).toHaveProperty('supportedLanguages');
       expect(response.body).toHaveProperty('endpoints');
-      expect(response.body.supportedLanguages).toEqual(['python', 'javascript', 'typescript', 'java', 'kotlin', 'cpp', 'csharp', 'go', 'rust', 'php', 'ruby', 'swift']);
+      expect(response.body.supportedLanguages).toEqual(['python', 'javascript']);
     });
   });
 
@@ -69,61 +69,9 @@ describe('API Routes', () => {
       expect(response.body.metadata.language).toBe('javascript');
     });
 
-    it('should execute Java code successfully', async () => {
-      const testCode = 'System.out.println("Hello, World!");';
-      const response = await request(app)
-        .post('/api/execute')
-        .send({
-          code: testCode,
-          language: 'java'
-        })
-        .expect(200);
 
-      expect(response.body).toHaveProperty('success', true);
-      expect(response.body.metadata.language).toBe('java');
-    });
 
-    it('should execute C++ code successfully', async () => {
-      const testCode = 'cout << "Hello, World!" << endl;';
-      const response = await request(app)
-        .post('/api/execute')
-        .send({
-          code: testCode,
-          language: 'c++'
-        })
-        .expect(200);
 
-      expect(response.body).toHaveProperty('success', true);
-      expect(response.body.metadata.language).toBe('c++');
-    });
-
-    it('should execute TypeScript code successfully', async () => {
-      const testCode = 'console.log("Hello, TypeScript!");';
-      const response = await request(app)
-        .post('/api/execute')
-        .send({
-          code: testCode,
-          language: 'typescript'
-        })
-        .expect(200);
-
-      expect(response.body).toHaveProperty('success', true);
-      expect(response.body.metadata.language).toBe('typescript');
-    });
-
-    it('should execute Go code successfully', async () => {
-      const testCode = 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, Go!")\n}';
-      const response = await request(app)
-        .post('/api/execute')
-        .send({
-          code: testCode,
-          language: 'go'
-        })
-        .expect(200);
-
-      expect(response.body).toHaveProperty('success', true);
-      expect(response.body.metadata.language).toBe('go');
-    });
 
     it('should reject empty code', async () => {
       const response = await request(app)

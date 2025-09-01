@@ -63,7 +63,6 @@ describe('Code Execution Module', () => {
       // Test various aliases
       await expect(runCodeInDocker('print("hello")', 'py')).resolves.toBeDefined();
       await expect(runCodeInDocker('console.log("hello")', 'js')).resolves.toBeDefined();
-      await expect(runCodeInDocker('cout << "hello"', 'c++')).resolves.toBeDefined();
     });
 
     it('should execute Python code successfully', async () => {
@@ -106,44 +105,7 @@ describe('Code Execution Module', () => {
       );
     });
 
-    it('should auto-wrap Java code', async () => {
-      const testCode = 'System.out.println("Hello");';
-      const expectedWrappedCode = `public class Main {
-    public static void main(String[] args) {
-        System.out.println("Hello");
-    }
-}`;
-      
-      mockExec.mockImplementation((cmd, options, callback) => {
-        callback(null, 'Hello', '');
-        return { on: jest.fn() };
-      });
 
-      await runCodeInDocker(testCode, 'java');
-      
-      expect(mockFs.writeFileSync).toHaveBeenCalledWith('/temp/test.js', expectedWrappedCode);
-    });
-
-    it('should auto-wrap C++ code', async () => {
-      const testCode = 'cout << "Hello" << endl;';
-      const expectedWrappedCode = `#include <iostream>
-#include <string>
-using namespace std;
-
-int main() {
-    cout << "Hello" << endl;
-    return 0;
-}`;
-      
-      mockExec.mockImplementation((cmd, options, callback) => {
-        callback(null, 'Hello', '');
-        return { on: jest.fn() };
-      });
-
-      await runCodeInDocker(testCode, 'cpp');
-      
-      expect(mockFs.writeFileSync).toHaveBeenCalledWith('/temp/test.js', expectedWrappedCode);
-    });
 
     it('should handle execution timeout', async () => {
       const testCode = 'print("Hello")';
