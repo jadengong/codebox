@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Code, Play, Zap, Shield, Globe, ArrowRight, Github, ExternalLink } from 'lucide-react';
+import { Code, Play, Zap, Shield, Globe, ArrowRight, Github, ExternalLink, FileText } from 'lucide-react';
 import './LandingPage.css';
 
 function LandingPage() {
@@ -21,22 +21,32 @@ function LandingPage() {
     {
       icon: <Code size={32} />,
       title: "Multi-Language Support",
-      description: "Write code in Python, JavaScript, Java, and C++ with full syntax highlighting and auto-completion."
+      description: "Write code in 12+ languages including Python, JavaScript, TypeScript, Java, C++, Rust, Go, and more with full syntax highlighting."
     },
     {
       icon: <Shield size={32} />,
       title: "Secure Execution",
-      description: "Your code runs in isolated Docker containers with no persistent state or access to your system."
+      description: "Your code runs in isolated Docker containers with resource limits and no access to your system or network."
     },
     {
       icon: <Zap size={32} />,
-      title: "Instant Results",
-      description: "Get real-time output and execution feedback. Perfect for testing snippets and learning new languages."
+      title: "Real-time Execution",
+      description: "Get instant feedback with live output streaming, execution time tracking, and error highlighting."
     },
     {
       icon: <Globe size={32} />,
-      title: "Web-Based",
-      description: "No installations required. Run code directly in your browser from anywhere in the world."
+      title: "Web-Based IDE",
+      description: "Full-featured code editor with auto-completion, syntax highlighting, and no installations required."
+    },
+    {
+      icon: <FileText size={32} />,
+      title: "Code Templates",
+      description: "Start with pre-built templates for common tasks, algorithms, and language-specific examples."
+    },
+    {
+      icon: <Play size={32} />,
+      title: "Interactive Learning",
+      description: "Perfect for learning new languages, testing algorithms, and experimenting with code snippets."
     }
   ];
 
