@@ -454,7 +454,7 @@ html body.dark {
 /* Code Editor Section - Now perfectly centered */
 .editorSection {
     flex: 1;
-    max-width: 1000px;
+    max-width: none;
     /* Remove top margin since it's now in a container */
     margin-top: 0;
     margin-bottom: 0;
@@ -480,7 +480,7 @@ html body.dark {
 .editorSection.fullWidth {
     flex: none;
     width: 100%;
-    max-width: 1000px;
+    max-width: none;
     margin: 0 auto;
     /* Ensure centering in full width mode */
     display: flex;
@@ -604,7 +604,7 @@ html body.dark {
     overflow: hidden;
     min-width: 700px;
     min-height: 500px;
-    max-width: 1400px;
+    max-width: 1200px;
     max-height: 1000px;
     position: relative;
     transition: box-shadow 0.2s ease;
