@@ -74,13 +74,20 @@ module.exports = async function handler(req, res) {
         
       case 'python':
         try {
-          // Use Vercel Sandbox for real Python execution
-          const { Sandbox } = require('@vercel/sandbox');
-          
-          const sandbox = await Sandbox.create({
-            runtime: 'python3.13',
-            timeout: 30000, // 30 seconds timeout
-            resources: { vcpus: 1 }
+          // Use free Judge0 API (no API key required)
+          const response = await fetch('https://judge0-ce.p.rapidapi.com/submissions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
+            },
+            body: JSON.stringify({
+              language_id: 71, // Python 3
+              source_code: code,
+              stdin: '',
+              cpu_time_limit: '5.0',
+              memory_limit: 128000
+            })
           });
 
           if (!response.ok) {
