@@ -18,6 +18,7 @@
   "license": "ISC",
   "description": "A secure code execution sandbox built with React and Vercel Serverless Functions",
   "dependencies": {
+    "@vercel/sandbox": "^0.0.1",
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "uuid": "^11.1.0"

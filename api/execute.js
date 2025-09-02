@@ -73,15 +73,53 @@ module.exports = async function handler(req, res) {
         break;
         
       case 'python':
-        result = `Python execution (demo mode):
-${code}
+        try {
+          // Use Vercel Sandbox for real Python execution
+          const { Sandbox } = require('@vercel/sandbox');
+          
+          const sandbox = await Sandbox.create({
+            runtime: 'python3.13',
+            timeout: 30000, // 30 seconds timeout
+            resources: { vcpus: 1 }
+          });
 
-Output (simulated):
-Hello, World!
-Welcome to Python!
-Sum of 1 to 10: 55
+          // Write the Python code to a file in the sandbox
+          await sandbox.writeFiles([
+            { path: 'script.py', stream: Buffer.from(code) }
+          ]);
 
-Note: This is a demo version. Python execution is simulated on Vercel.`;
+          // Execute the Python script
+          const execution = await sandbox.runCommand({
+            cmd: 'python3',
+            args: ['script.py']
+          });
+
+          // Capture output and errors
+          let output = '';
+          let errors = '';
+
+          if (execution.stdout) {
+            output = execution.stdout.toString();
+          }
+          
+          if (execution.stderr) {
+            errors = execution.stderr.toString();
+          }
+
+          // Clean up the sandbox
+          await sandbox.destroy();
+
+          // Combine output and errors
+          if (errors) {
+            result = `Error:\n${errors}\n\nOutput:\n${output}`;
+          } else {
+            result = output || 'Code executed successfully with no output.';
+          }
+
+        } catch (sandboxError) {
+          console.error('[API] Sandbox execution error:', sandboxError);
+          result = `Python execution error: ${sandboxError.message}`;
+        }
         break;
         
 
