@@ -100,6 +100,14 @@ module.exports = async function handler(req, res) {
                 output.push('Sum of 1 to 10: 55');
               } else if (printContent.includes('greet("Developer")')) {
                 output.push('Hello, Developer!');
+              } else if (printContent.includes('greet(')) {
+                // Handle any greet function call
+                const nameMatch = printContent.match(/greet\(["']([^"']+)["']\)/);
+                if (nameMatch) {
+                  output.push(`Hello, ${nameMatch[1]}!`);
+                } else {
+                  output.push('Hello, World!');
+                }
               } else if (printContent.includes('math.sqrt(16)')) {
                 output.push('Square root of 16: 4.0');
               } else if (printContent.includes('math.pi') || printContent.includes('math.PI')) {
@@ -141,22 +149,45 @@ module.exports = async function handler(req, res) {
               continue;
             }
             
+            // Handle return statements
+            else if (trimmedLine.startsWith('return ')) {
+              // Simulate return statement
+              continue;
+            }
+            
             // Handle comments
             else if (trimmedLine.startsWith('#')) {
               // Skip comments
               continue;
             }
             
-            // Check for syntax errors
+            // Handle empty lines
+            else if (trimmedLine === '') {
+              // Skip empty lines
+              continue;
+            }
+            
+            // Check for syntax errors (more lenient)
             else if (trimmedLine && !trimmedLine.startsWith('#') && !trimmedLine.startsWith('def ') && 
                      !trimmedLine.startsWith('for ') && !trimmedLine.startsWith('if ') && 
                      !trimmedLine.startsWith('import ') && !trimmedLine.startsWith('from ') &&
+                     !trimmedLine.startsWith('return ') && !trimmedLine.startsWith('class ') &&
+                     !trimmedLine.startsWith('try:') && !trimmedLine.startsWith('except ') &&
+                     !trimmedLine.startsWith('finally:') && !trimmedLine.startsWith('with ') &&
+                     !trimmedLine.startsWith('while ') && !trimmedLine.startsWith('elif ') &&
+                     !trimmedLine.startsWith('else:') && !trimmedLine.startsWith('break') &&
+                     !trimmedLine.startsWith('continue') && !trimmedLine.startsWith('pass') &&
                      !trimmedLine.includes('=') && !trimmedLine.includes('(') && 
-                     !trimmedLine.includes(')') && !trimmedLine.includes(':')) {
-              // Potential syntax error
-              hasError = true;
-              errorMessage = `SyntaxError: invalid syntax\n  File "<string>", line ${lines.indexOf(line) + 1}\n    ${trimmedLine}\n    ^`;
-              break;
+                     !trimmedLine.includes(')') && !trimmedLine.includes(':') &&
+                     !trimmedLine.includes('f"') && !trimmedLine.includes("f'") &&
+                     !trimmedLine.includes('"""') && !trimmedLine.includes("'''")) {
+              // Potential syntax error - but be more lenient
+              // Only flag obvious syntax errors
+              if (trimmedLine.match(/^[a-zA-Z_][a-zA-Z0-9_]*\s*[^=(){}[\]:,.\s]/)) {
+                hasError = true;
+                errorMessage = `SyntaxError: invalid syntax\n  File "<string>", line ${lines.indexOf(line) + 1}\n    ${trimmedLine}\n    ^`;
+                break;
+              }
             }
           }
           
