@@ -9,8 +9,25 @@
       }
     },
     {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
+      "src": "api/execute.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 30
+      }
+    },
+    {
+      "src": "api/health.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 10
+      }
+    },
+    {
+      "src": "api/index.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 10
+      }
     }
   ],
   "routes": [
@@ -23,17 +40,6 @@
       "dest": "/client/$1"
     }
   ],
-  "functions": {
-    "api/execute.js": {
-      "maxDuration": 30
-    },
-    "api/health.js": {
-      "maxDuration": 10
-    },
-    "api/index.js": {
-      "maxDuration": 10
-    }
-  },
   "env": {
     "NODE_ENV": "production"
   },
