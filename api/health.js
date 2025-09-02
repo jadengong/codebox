@@ -1,4 +1,10 @@
 export default async function handler(req, res) {
+  console.log('[API] Health function called:', {
+    method: req.method,
+    url: req.url,
+    headers: req.headers
+  });
+
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -6,10 +12,12 @@ export default async function handler(req, res) {
 
   // Handle preflight request
   if (req.method === 'OPTIONS') {
+    console.log('[API] Health: Handling OPTIONS request');
     return res.status(200).end();
   }
 
   if (req.method !== 'GET') {
+    console.log('[API] Health: Method not allowed:', req.method);
     return res.status(405).json({ error: 'Method not allowed' });
   }
 

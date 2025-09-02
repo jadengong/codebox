@@ -1,4 +1,11 @@
 export default async function handler(req, res) {
+  console.log('[API] Execute function called:', {
+    method: req.method,
+    url: req.url,
+    headers: req.headers,
+    body: req.body
+  });
+
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -6,15 +13,18 @@ export default async function handler(req, res) {
 
   // Handle preflight request
   if (req.method === 'OPTIONS') {
+    console.log('[API] Handling OPTIONS request');
     return res.status(200).end();
   }
 
   if (req.method !== 'POST') {
+    console.log('[API] Method not allowed:', req.method);
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
     const { code, language } = req.body;
+    console.log('[API] Request body:', { code: code?.substring(0, 100) + '...', language });
 
     if (!code || !language) {
       return res.status(400).json({ 
@@ -82,20 +92,25 @@ Note: This is a demo version. Python execution is simulated on Vercel.`;
         });
     }
 
-    res.json({ 
+    const response = { 
       result,
       language,
       codeLength: code.length,
       timestamp: new Date().toISOString(),
       environment: 'vercel-serverless'
-    });
+    };
+    
+    console.log('[API] Sending successful response:', response);
+    res.json(response);
 
   } catch (error) {
-    console.error('Execute error:', error);
-    res.status(500).json({ 
+    console.error('[API] Execute error:', error);
+    const errorResponse = { 
       error: 'Internal server error',
       details: error.message,
       timestamp: new Date().toISOString()
-    });
+    };
+    console.log('[API] Sending error response:', errorResponse);
+    res.status(500).json(errorResponse);
   }
 }

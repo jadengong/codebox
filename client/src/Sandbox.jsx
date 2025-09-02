@@ -226,7 +226,21 @@ console.log(greet("Developer"));`
         setConnectionStatus('connected');
         setExecutionTime(Date.now() - startTime);
       } else {
-        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        console.log('[Frontend] Non-200 response:', response.status, response.statusText);
+        
+        let errorData;
+        try {
+          const responseText = await response.text();
+          console.log('[Frontend] Raw response text:', responseText);
+          errorData = JSON.parse(responseText);
+        } catch (parseError) {
+          console.error('[Frontend] Failed to parse error response:', parseError);
+          errorData = { 
+            error: `HTTP ${response.status}: ${response.statusText}`,
+            details: 'Response could not be parsed as JSON'
+          };
+        }
+        
         console.log('[Frontend] Execute error data:', errorData);
         setOutput(errorData.error || `HTTP ${response.status}: Something went wrong.`);
         setHasError(true);
@@ -238,6 +252,9 @@ console.log(greet("Developer"));`
       }
     } catch (err) {
       console.error('[Frontend] Execute error:', err);
+      console.error('[Frontend] Error type:', err.constructor.name);
+      console.error('[Frontend] Error message:', err.message);
+      console.error('[Frontend] Error stack:', err.stack);
       
       // Check if we're on Vercel
       const isVercel = window.location.hostname.includes('vercel.app') || 
@@ -247,13 +264,17 @@ console.log(greet("Developer"));`
         setOutput(`Failed to connect to Vercel backend. This might be a deployment issue.
         
 Error details: ${err.message}
+Error type: ${err.constructor.name}
 
 Please check:
 1. Your Vercel deployment is complete
 2. API routes are properly configured
-3. Try refreshing the page`);
+3. Try refreshing the page
+4. Check browser console for more details`);
       } else {
-        setOutput('Failed to connect to backend. Please make sure the server is running.');
+        setOutput(`Failed to connect to backend. Please make sure the server is running.
+        
+Error details: ${err.message}`);
       }
       
       setHasError(true);
