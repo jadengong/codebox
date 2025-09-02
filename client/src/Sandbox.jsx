@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Select from 'react-select';
 import Editor from '@monaco-editor/react';
 import styles from './Sandbox.module.css';
-import { Sun, Moon, Play, RotateCcw, FileText, Zap, CheckCircle, AlertCircle, Save, Keyboard } from 'lucide-react';
+import { Sun, Moon, Play, RotateCcw, FileText, Zap, CheckCircle, AlertCircle, Keyboard } from 'lucide-react';
 import LoadingSpinner from './components/LoadingSpinner';
 
 function Sandbox() {
@@ -37,7 +37,7 @@ function Sandbox() {
     document.body.classList.add(theme);
     document.documentElement.classList.add(theme);
     console.log('Initial theme applied:', theme);
-  }, []);
+  }, [theme]);
 
   // Track editor dimensions
   useEffect(() => {
@@ -57,7 +57,7 @@ function Sandbox() {
   }, []);
 
   // Enhanced code examples for each language
-  const codeExamples = {
+  const codeExamples = useMemo(() => ({
     python: `# Welcome to Python! 🐍
 print("Hello, World!")
 print("Welcome to Python!")
@@ -91,7 +91,7 @@ function greet(name) {
 }
 
 console.log(greet("Developer"));`
-  };
+  }), []);
 
   // Check backend connection on component mount
   useEffect(() => {
@@ -117,34 +117,6 @@ console.log(greet("Developer"));`
       setCode(codeExamples[language] || '');
     }
   }, [language, code, codeExamples, isCleared]);
-
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      // Ctrl+Enter to run code
-      if (e.ctrlKey && e.key === 'Enter') {
-        e.preventDefault();
-        if (!isRunning && code.trim() && connectionStatus === 'connected') {
-          handleRun();
-        }
-      }
-      
-    // Ctrl+Shift+S to load example (changed from Ctrl+S to avoid conflict with Monaco's save)
-      if (e.ctrlKey && e.shiftKey && e.key === 'S') {
-        e.preventDefault();
-        handleLoadExample();
-      }
-      
-      // Ctrl+K to show shortcuts
-      if (e.ctrlKey && e.key === 'k') {
-        e.preventDefault();
-        setShowShortcuts(!showShortcuts);
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isRunning, code, connectionStatus, showShortcuts]);
 
   const checkBackendConnection = async () => {
     try {
@@ -208,7 +180,7 @@ console.log(greet("Developer"));`
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
-  const validateCode = () => {
+  const validateCode = useCallback(() => {
     if (!code.trim()) {
       setOutput('Please enter some code to run.');
       setHasError(true);
@@ -222,9 +194,9 @@ console.log(greet("Developer"));`
     }
     
     return true;
-  };
+  }, [code]);
 
-  const handleRun = async () => {
+  const handleRun = useCallback(async () => {
     if (!validateCode()) return;
     
     setIsRunning(true);
@@ -289,7 +261,7 @@ Please check:
     } finally {
       setIsRunning(false);
     }
-  };
+  }, [code, language, validateCode]);
 
   const handleClear = () => {
     console.log('Clear button clicked, clearing code...');
@@ -303,22 +275,15 @@ Please check:
     console.log('Code state cleared, new code value:', '');
   };
 
-  const handleLoadExample = () => {
+  const handleLoadExample = useCallback(() => {
     setIsCleared(false);
     setCode(codeExamples[language] || '');
     setOutput('');
     setHasError(false);
     setExecutionTime(null);
-  };
+  }, [codeExamples, language]);
 
-  const getConnectionStatusColor = () => {
-    switch (connectionStatus) {
-      case 'connected': return '#28a745';
-      case 'disconnected': return '#dc3545';
-      case 'error': return '#ffc107';
-      default: return '#6c757d';
-    }
-  };
+
 
   const getConnectionStatusText = () => {
     switch (connectionStatus) {
@@ -337,18 +302,40 @@ Please check:
     return lang;
   };
 
-  const getLanguageLabel = (lang) => {
-    const labels = {
-      'python': '🐍 Python',
-      'javascript': '🚀 JavaScript'
-    };
-    return labels[lang] || lang;
-  };
+
 
   const languageOptions = [
     { value: 'python', label: '🐍 Python' },
     { value: 'javascript', label: '🚀 JavaScript' }
   ];
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl+Enter to run code
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        if (!isRunning && code.trim() && connectionStatus === 'connected') {
+          handleRun();
+        }
+      }
+      
+    // Ctrl+Shift+S to load example (changed from Ctrl+S to avoid conflict with Monaco's save)
+      if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+        e.preventDefault();
+        handleLoadExample();
+      }
+      
+      // Ctrl+K to show shortcuts
+      if (e.ctrlKey && e.key === 'k') {
+        e.preventDefault();
+        setShowShortcuts(!showShortcuts);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isRunning, code, connectionStatus, showShortcuts, handleRun, handleLoadExample]);
 
   const customSelectStyles = {
     control: (base, state) => ({

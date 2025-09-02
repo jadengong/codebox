@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Code, Play, Zap, Shield, Globe, ArrowRight, Github, ExternalLink, FileText } from 'lucide-react';
+import { Code, Play, Zap, Shield, Globe, ArrowRight, Github, FileText } from 'lucide-react';
 import './LandingPage.css';
 
 function LandingPage() {
