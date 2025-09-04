@@ -1,5 +1,6 @@
 module.exports = async function handler(req, res) {
-  console.log('[API] Execute function called:', {
+  const requestId = Math.random().toString(36).substr(2, 9);
+  console.log(`[API] Execute function called [${requestId}]:`, {
     method: req.method,
     url: req.url,
     headers: req.headers,
@@ -13,7 +14,7 @@ module.exports = async function handler(req, res) {
 
   // Handle preflight request
   if (req.method === 'OPTIONS') {
-    console.log('[API] Handling OPTIONS request');
+    console.log(`[API] Handling OPTIONS request [${requestId}]`);
     return res.status(200).end();
   }
 
@@ -44,7 +45,7 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    console.log(`[API] Executing ${language} code, length: ${code.length}`);
+    console.log(`[API] Executing ${language} code [${requestId}], length: ${code.length}`);
 
     let result;
     
