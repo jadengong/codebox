@@ -68,6 +68,7 @@ module.exports = async function handler(req, res) {
           sandboxedFunction(mockConsole);
           result = output.join('\n') || 'Code executed successfully with no output.';
         } catch (error) {
+          console.error('[API] JavaScript execution error:', error);
           result = `Error: ${error.message}`;
         }
         break;
