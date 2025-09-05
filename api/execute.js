@@ -239,13 +239,14 @@ Error: ${simError.message}`;
     res.json(response);
 
   } catch (error) {
-    console.error('[API] Execute error:', error);
+    console.error(`[API] Execute error [${requestId}]:`, error);
     const errorResponse = { 
       error: 'Internal server error',
       details: error.message,
+      requestId,
       timestamp: new Date().toISOString()
     };
-    console.log('[API] Sending error response:', errorResponse);
+    console.log(`[API] Sending error response [${requestId}]:`, errorResponse);
     res.status(500).json(errorResponse);
   }
 }
