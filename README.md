@@ -96,7 +96,7 @@ npm start
 # API calls will be automatically proxied to backend
 ```
 
-##Testing
+## Testing
 
 Test the core functionality:
 
@@ -109,8 +109,6 @@ npm test
 
 # Run frontend tests
 cd client && npm test
-
-
 ```
 
 ## API Endpoints
