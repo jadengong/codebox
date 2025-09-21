@@ -2,8 +2,9 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Select from 'react-select';
 import Editor from '@monaco-editor/react';
 import styles from './Sandbox.module.css';
-import { Sun, Moon, Play, RotateCcw, FileText, Zap, CheckCircle, AlertCircle, Keyboard } from 'lucide-react';
+import { Sun, Moon, Play, RotateCcw, FileText, Zap, CheckCircle, AlertCircle, Keyboard, Code } from 'lucide-react';
 import LoadingSpinner from './components/LoadingSpinner';
+import { formatCode, isLanguageSupported } from './utils/codeFormatter';
 
 function Sandbox() {
   const greeting = "Hello, and welcome to the Code Sandbox!";
@@ -18,6 +19,7 @@ function Sandbox() {
   const [executionTime, setExecutionTime] = useState(null);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [editorDimensions, setEditorDimensions] = useState({ width: 400, height: 300 });
+  const [isFormatting, setIsFormatting] = useState(false);
 
   const [isCleared, setIsCleared] = useState(false);
 
@@ -304,6 +306,40 @@ Error details: ${err.message}`);
     setExecutionTime(null);
   }, [codeExamples, language]);
 
+  const handleFormat = useCallback(() => {
+    if (!code.trim() || !isLanguageSupported(language)) {
+      setOutput('Formatting is not supported for this language or code is empty.');
+      setHasError(true);
+      return;
+    }
+
+    setIsFormatting(true);
+    setHasError(false);
+    setOutput('Formatting code...');
+
+    try {
+      console.log('[Frontend] Formatting code for language:', language);
+      const formattedCode = formatCode(code, language);
+      
+      if (formattedCode !== code) {
+        setCode(formattedCode);
+        setOutput('Code formatted successfully!');
+        setHasError(false);
+        console.log('[Frontend] Code formatted successfully');
+      } else {
+        setOutput('Code is already properly formatted.');
+        setHasError(false);
+        console.log('[Frontend] Code was already formatted');
+      }
+    } catch (error) {
+      console.error('[Frontend] Formatting error:', error);
+      setOutput(`Formatting failed: ${error.message}`);
+      setHasError(true);
+    } finally {
+      setIsFormatting(false);
+    }
+  }, [code, language]);
+
 
 
   const getConnectionStatusText = () => {
@@ -352,11 +388,19 @@ Error details: ${err.message}`);
         e.preventDefault();
         setShowShortcuts(!showShortcuts);
       }
+      
+      // Ctrl+Shift+F to format code
+      if (e.ctrlKey && e.shiftKey && e.key === 'F') {
+        e.preventDefault();
+        if (!isFormatting && code.trim() && isLanguageSupported(language)) {
+          handleFormat();
+        }
+      }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isRunning, code, connectionStatus, showShortcuts, handleRun, handleLoadExample]);
+  }, [isRunning, code, connectionStatus, showShortcuts, isFormatting, language, handleRun, handleLoadExample, handleFormat]);
 
   const customSelectStyles = {
     control: (base, state) => ({
@@ -472,6 +516,10 @@ Error details: ${err.message}`);
               <div className={styles.shortcutItem}>
                 <kbd>Ctrl + Shift + S</kbd>
                 <span>Load Example</span>
+              </div>
+              <div className={styles.shortcutItem}>
+                <kbd>Ctrl + Shift + F</kbd>
+                <span>Format Code</span>
               </div>
               <div className={styles.shortcutItem}>
                 <kbd>Ctrl + K</kbd>
@@ -630,6 +678,25 @@ Error details: ${err.message}`);
           >
             <FileText size={16} />
             Load Example
+          </button>
+          
+          <button 
+            onClick={handleFormat}
+            className={styles.formatButton}
+            disabled={isRunning || isFormatting || !code.trim() || !isLanguageSupported(language)}
+            title={`Format ${language} code (Ctrl+Shift+F)`}
+          >
+            {isFormatting ? (
+              <>
+                <LoadingSpinner size="small" color="white" />
+                Formatting...
+              </>
+            ) : (
+              <>
+                <Code size={16} />
+                Format Code
+              </>
+            )}
           </button>
           
           <button 

@@ -669,7 +669,7 @@ html body.dark {
     justify-content: center;
 }
 
-.runButton, .exampleButton, .clearButton {
+.runButton, .exampleButton, .clearButton, .formatButton {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -745,10 +745,30 @@ html body.dark {
     box-shadow: 0 6px 20px rgba(149, 165, 166, 0.4);
 }
 
+.formatButton {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+.formatButton:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2980b9, #3498db);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+}
+
+.formatButton:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
 /* Prevent any button movement during theme changes */
 .runButton,
 .exampleButton,
-.clearButton {
+.clearButton,
+.formatButton {
     /* Ensure consistent positioning */
     position: relative;
     /* Prevent any size changes */
@@ -936,7 +956,7 @@ html body.dark {
         flex-direction: column;
     }
     
-    .runButton, .exampleButton, .clearButton {
+    .runButton, .exampleButton, .clearButton, .formatButton {
         width: 100%;
     }
     

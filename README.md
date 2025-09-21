@@ -12,6 +12,9 @@ Users can write code in the browser, select a language, and get real-time output
 - **Multi-language support**
   - Python and JavaScript
   - Write just `cout << "Hello";` or `System.out.println("Hi");`
+- **Code formatting**
+  - Auto-format Python and JavaScript code for better readability
+  - Format button and keyboard shortcut (Ctrl+Shift+F)
 - **Temp file cleanup**
 - **Smart error formatting**
   - Cleans up messy compiler output to show what matters
