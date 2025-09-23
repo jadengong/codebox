@@ -11,7 +11,7 @@ Users can write code in the browser, select a language, and get real-time output
   - Each submission runs in a short-lived container with no persistent state
 - **Multi-language support**
   - Python and JavaScript
-  - Write just `cout << "Hello";` or `System.out.println("Hi");`
+  - Write just `console.log("Hello")` or `print("Hi")`
 - **Code formatting**
   - Auto-format Python and JavaScript code for better readability
   - Format button and keyboard shortcut (Ctrl+Shift+F)
@@ -74,9 +74,7 @@ cd client
 npm install
 ```
 
-
-
-### 5. Start the backend and frontend 
+### 4. Start the backend and frontend 
 
 **Option 1: Start with nodemon (Recommended)**
 ```bash
@@ -93,8 +91,11 @@ npm start
 
 Start the frontend server (from `/client`):
 ```bash
-cd client
-npm start
+# PowerShell (Windows)
+cd client; npm start
+
+# Bash (macOS/Linux)
+cd client && npm start
 # Frontend will run on http://localhost:3000
 # API calls will be automatically proxied to backend
 ```
@@ -127,7 +128,7 @@ cd client && npm test
 
 1. **Clone and install dependencies** (see Setup Instructions above)
 2. **Start the backend server** with `npm start`
-3. **Start the frontend** with `cd client && npm start`
+3. **Start the frontend** with `cd client; npm start` (PowerShell) or `cd client && npm start` (Bash)
 4. **Open your browser** and start coding!
 
 ---
@@ -138,6 +139,14 @@ cd client && npm test
 ---
 
 **Happy Coding! 🎉**
+
+---
+
+## Keyboard Shortcuts
+
+- Ctrl + Enter: Run Code
+- Ctrl + Shift + S: Load Example
+- Ctrl + Shift + F: Format Code
 
 
 
