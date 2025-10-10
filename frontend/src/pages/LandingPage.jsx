@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Code, Play, Zap, Shield, Globe, ArrowRight, Github, FileText } from 'lucide-react';
-// import '../styles/LandingPage.css';
+import '../styles/LandingPage.css';
 
 function LandingPage() {
   const navigate = useNavigate();
