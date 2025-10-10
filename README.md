@@ -42,13 +42,45 @@ Users can write code in the browser, select a language, and get real-time output
 
 ---
 
+## Project Structure
+
+```
+code-execution-sandbox/
+├── backend/                    # Backend Node.js application
+│   ├── src/
+│   │   ├── controllers/        # API route handlers
+│   │   ├── services/          # Business logic (code execution)
+│   │   ├── utils/             # Utilities
+│   │   └── middleware/        # Express middleware
+│   ├── tests/                 # Backend tests
+│   └── package.json
+├── frontend/                   # React frontend application
+│   ├── src/
+│   │   ├── components/        # Reusable React components
+│   │   ├── pages/            # Page components
+│   │   ├── utils/            # Frontend utilities
+│   │   ├── styles/           # CSS files
+│   │   └── hooks/            # Custom React hooks
+│   ├── public/               # Static assets
+│   ├── tests/               # Frontend tests
+│   └── package.json
+├── shared/                    # Shared utilities/types
+├── docs/                     # Documentation
+│   ├── API.md               # API documentation
+│   ├── development/         # Development guides
+│   └── deployment/          # Deployment guides
+├── scripts/                  # Build/deploy scripts
+├── docker/                   # Docker-related files
+└── README.md                 # This file
+```
+
 ## Setup Instructions
 
 ### Prerequisites
 
 - **Node.js** (v16 or higher)
 - **Docker** (must be running)
-- **Python** (v3.8 or higher, for optional Python backend)
+- **npm** or **yarn**
 
 ### 1. Clone the repo
 
@@ -57,45 +89,32 @@ git clone https://github.com/jadengong/code-execution-sandbox
 cd code-execution-sandbox
 ```
 
-### 2. Install backend dependencies
+### 2. Install all dependencies
 
 From the root directory:
 
 ```bash
-npm install
+npm run install:all
 ```
 
-### 3. Install frontend dependencies
+### 3. Start the development servers
 
-Navigate into the frontend `/client` folder:
-
-```bash
-cd client
-npm install
-```
-
-### 4. Start the backend and frontend 
-
-**Option 1: Start with nodemon (Recommended)**
+**Option 1: Start both services (Recommended)**
 ```bash
 npm run dev
 ```
 
 **Option 2: Start services separately**
 
-Start the backend server (from the root):
+Start the backend server:
 ```bash
-npm start
+npm run dev:backend
 # Backend will run on http://localhost:5000
 ```
 
-Start the frontend server (from `/client`):
+Start the frontend server:
 ```bash
-# PowerShell (Windows)
-cd client; npm start
-
-# Bash (macOS/Linux)
-cd client && npm start
+npm run dev:frontend
 # Frontend will run on http://localhost:3000
 # API calls will be automatically proxied to backend
 ```
@@ -108,11 +127,14 @@ Test the core functionality:
 # Start local development
 npm run dev
 
-# Run backend tests
+# Run all tests
 npm test
 
-# Run frontend tests
-cd client && npm test
+# Run backend tests only
+npm run test:backend
+
+# Run frontend tests only
+npm run test:frontend
 ```
 
 ## API Endpoints
@@ -127,14 +149,17 @@ cd client && npm test
 ## 🚀 Getting Started
 
 1. **Clone and install dependencies** (see Setup Instructions above)
-2. **Start the backend server** with `npm start`
-3. **Start the frontend** with `cd client; npm start` (PowerShell) or `cd client && npm start` (Bash)
-4. **Open your browser** and start coding!
+2. **Start both services** with `npm run dev`
+3. **Open your browser** to `http://localhost:3000` and start coding!
 
 ---
 
 
-- **`jest.setup.js`** - Jest testing configuration
+## Documentation
+
+- **[API Documentation](docs/API.md)** - Complete API reference
+- **[Development Guide](docs/development/DEVELOPMENT.md)** - Development setup and guidelines
+- **[Deployment Guide](docs/deployment/DEPLOYMENT.md)** - Production deployment instructions
 
 ---
 
