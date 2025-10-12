@@ -1,17 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Code, Play, Zap, Shield, Globe, ArrowRight, Github, FileText } from 'lucide-react';
 import '../styles/LandingPage.css';
 
 function LandingPage() {
   const navigate = useNavigate();
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    // Trigger animations after component mounts
-    const timer = setTimeout(() => setIsVisible(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleStart = () => {
     navigate('/sandbox');
@@ -56,7 +49,7 @@ function LandingPage() {
   ];
 
   return (
-    <div className={`landing-container ${isVisible ? 'visible' : ''}`}>
+    <div className="landing-container">
       {/* Hero Section */}
       <div className="hero-section">
         <div className="hero-content">
@@ -121,7 +114,6 @@ print(f"Fibonacci(10): {fib(10)}")`}
             <div 
               key={index} 
               className="feature-card"
-              style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="feature-icon">
                 {feature.icon}
@@ -141,7 +133,6 @@ print(f"Fibonacci(10): {fib(10)}")`}
             <div 
               key={index} 
               className="language-card"
-              style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="language-icon">{lang.icon}</div>
               <h3 className="language-name">{lang.name}</h3>

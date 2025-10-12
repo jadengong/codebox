@@ -7,8 +7,6 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import { formatCode, isLanguageSupported } from '../utils/codeFormatter';
 
 function Sandbox() {
-  const greeting = "Hello, and welcome to the Code Sandbox!";
-
   const [language, setLanguage] = useState('python');
   const [code, setCode] = useState('');
   const [output, setOutput] = useState('');
@@ -20,8 +18,6 @@ function Sandbox() {
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [editorDimensions, setEditorDimensions] = useState({ width: 400, height: 300 });
   const [isFormatting, setIsFormatting] = useState(false);
-
-  const [isCleared, setIsCleared] = useState(false);
 
   // Apply theme to body element for background changes
   useEffect(() => {
