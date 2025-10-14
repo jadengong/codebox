@@ -18,6 +18,17 @@ function Sandbox() {
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [editorDimensions, setEditorDimensions] = useState({ width: 400, height: 300 });
   const [isFormatting, setIsFormatting] = useState(false);
+  const [isCleared, setIsCleared] = useState(false);
+  
+  // Generate greeting based on time of day
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 18) return "Good Afternoon";
+    return "Good Evening";
+  };
+  
+  const greeting = getGreeting();
 
   // Apply theme to body element for background changes
   useEffect(() => {
