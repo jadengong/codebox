@@ -106,18 +106,47 @@ npm run dev
 
 **Option 2: Start services separately**
 
-Start the backend server:
+For **Bash/Zsh/Linux/WSL**:
 ```bash
-npm run dev:backend
+# Terminal 1 - Backend
+cd backend && npm start
 # Backend will run on http://localhost:5000
+
+# Terminal 2 - Frontend  
+cd frontend && npm start
+# Frontend will run on http://localhost:3000
 ```
 
-Start the frontend server:
+For **PowerShell (Windows)**:
+```powershell
+# Terminal 1 - Backend
+cd backend
+npm start
+# Backend will run on http://localhost:5000
+
+# Terminal 2 - Frontend
+cd frontend  
+npm start
+# Frontend will run on http://localhost:3000
+```
+
+**Option 3: Using individual npm scripts**
 ```bash
+# Backend only
+npm run dev:backend
+# Backend will run on http://localhost:5000
+
+# Frontend only
 npm run dev:frontend
 # Frontend will run on http://localhost:3000
-# API calls will be automatically proxied to backend
 ```
+
+> **Note**: If you encounter port conflicts (e.g., "address already in use"), you may need to kill existing processes:
+> ```bash
+# Find and kill process on port 5000 (Windows)
+netstat -ano | findstr :5000
+taskkill /PID <PID_NUMBER> /F
+> ```
 
 ## Testing
 
@@ -135,6 +164,37 @@ npm run test:backend
 
 # Run frontend tests only
 npm run test:frontend
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**1. Port already in use (EADDRINUSE)**
+```bash
+# Find process using port 5000
+netstat -ano | findstr :5000  # Windows
+lsof -i :5000                 # macOS/Linux
+
+# Kill the process
+taskkill /PID <PID> /F        # Windows
+kill -9 <PID>                 # macOS/Linux
+```
+
+**2. PowerShell command separator issues**
+- Use separate commands instead of `&&`
+- Example: `cd backend` then `npm start` (not `cd backend && npm start`)
+
+**3. Docker not running**
+- Ensure Docker Desktop is running
+- Check with: `docker --version`
+
+**4. Frontend-only testing**
+- If backend won't start, you can still test the UI:
+```bash
+cd frontend
+npm start
+# Visit http://localhost:3000 to see the interface
 ```
 
 ## API Endpoints
