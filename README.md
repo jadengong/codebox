@@ -32,7 +32,7 @@ Users can write code in the browser, select a language, and get real-time output
 
 --- 
 
-## 💡 How It Works
+## How It Works
 
 1. Users type code and select a language in the frontend.
 2. The backend saves the code to a temporary file.
@@ -206,7 +206,7 @@ npm start
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 1. **Clone and install dependencies** (see Setup Instructions above)
 2. **Start both services** with `npm run dev`
@@ -220,10 +220,6 @@ npm start
 - **[API Documentation](docs/API.md)** - Complete API reference
 - **[Development Guide](docs/development/DEVELOPMENT.md)** - Development setup and guidelines
 - **[Deployment Guide](docs/deployment/DEPLOYMENT.md)** - Production deployment instructions
-
----
-
-**Happy Coding! 🎉**
 
 ---
 
