@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Code, Play, Zap, Shield, Globe, ArrowRight, Github, FileText } from 'lucide-react';
+import { Code, Play, Zap, Shield, ArrowRight, Github, Terminal } from 'lucide-react';
 import '../styles/LandingPage.css';
 
 function LandingPage() {
@@ -10,37 +10,35 @@ function LandingPage() {
     navigate('/sandbox');
   };
 
-  const features = [
+  const codeExamples = [
     {
-      icon: <Code size={32} />,
-      title: "Multi-Language Support",
-      description: "Write code in Python and JavaScript with full syntax highlighting and real-time execution."
+      title: "Python Fibonacci",
+      language: "python",
+      code: `def fib(n):
+    if n <= 1:
+        return n
+    return fib(n-1) + fib(n-2)
+
+print(f"Fibonacci(10): {fib(10)}")`,
+      output: "Fibonacci(10): 55"
     },
     {
-      icon: <Shield size={32} />,
-      title: "Secure Execution",
-      description: "Your code runs in isolated Docker containers with resource limits and no access to your system or network."
-    },
-    {
-      icon: <Zap size={32} />,
-      title: "Real-time Execution",
-      description: "Get instant feedback with live output streaming, execution time tracking, and error highlighting."
-    },
-    {
-      icon: <Globe size={32} />,
-      title: "Web-Based IDE",
-      description: "Full-featured code editor with auto-completion, syntax highlighting, and no installations required."
-    },
-    {
-      icon: <FileText size={32} />,
-      title: "Code Templates",
-      description: "Start with pre-built templates for common tasks, algorithms, and language-specific examples."
-    },
-    {
-      icon: <Play size={32} />,
-      title: "Interactive Learning",
-      description: "Perfect for learning new languages, testing algorithms, and experimenting with code snippets."
+      title: "JavaScript Array Operations",
+      language: "javascript",
+      code: `const numbers = [1, 2, 3, 4, 5];
+const doubled = numbers.map(n => n * 2);
+const sum = doubled.reduce((a, b) => a + b, 0);
+console.log("Doubled:", doubled);
+console.log("Sum:", sum);`,
+      output: "Doubled: [ 2, 4, 6, 8, 10 ]\nSum: 30"
     }
+  ];
+
+  const steps = [
+    { number: 1, icon: <Code size={24} />, title: "Write Code", description: "Type your code in the Monaco editor with full syntax highlighting" },
+    { number: 2, icon: <Play size={24} />, title: "Click Run", description: "Execute with Ctrl+Enter or the Run button" },
+    { number: 3, icon: <Shield size={24} />, title: "Docker Executes", description: "Code runs in isolated container with resource limits" },
+    { number: 4, icon: <Zap size={24} />, title: "See Results", description: "Get instant output or error messages" }
   ];
 
   const supportedLanguages = [
@@ -106,21 +104,59 @@ print(f"Fibonacci(10): {fib(10)}")`}
         </div>
       </div>
 
-      {/* Features Section */}
-      <section className="features-section">
-        <h2 className="section-title">Why Choose Our Sandbox?</h2>
-        <div className="features-grid">
-          {features.map((feature, index) => (
-            <div 
-              key={index} 
-              className="feature-card"
-            >
-              <div className="feature-icon">
-                {feature.icon}
+      {/* Live Code Examples Section */}
+      <section className="examples-section">
+        <h2 className="section-title">Live Code Examples</h2>
+        <div className="examples-grid">
+          {codeExamples.map((example, index) => (
+            <div key={index} className="example-card">
+              <div className="example-header">
+                <h3 className="example-title">{example.title}</h3>
+                <span className="example-language">{example.language}</span>
               </div>
-              <h3 className="feature-title">{feature.title}</h3>
-              <p className="feature-description">{feature.description}</p>
+              <div className="example-content">
+                <div className="example-code-block">
+                  <div className="code-header">
+                    <div className="code-dots">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                    <span className="code-title">{example.language === 'python' ? 'example.py' : 'example.js'}</span>
+                  </div>
+                  <pre className="code-content">{example.code}</pre>
+                </div>
+                <div className="example-output-block">
+                  <div className="output-header">
+                    <Terminal size={16} />
+                    <span>Output</span>
+                  </div>
+                  <pre className="output-content">{example.output}</pre>
+                </div>
+              </div>
             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="how-it-works-section">
+        <h2 className="section-title">How It Works</h2>
+        <div className="steps-container">
+          {steps.map((step, index) => (
+            <React.Fragment key={index}>
+              <div className="step-item">
+                <div className="step-number">{step.number}</div>
+                <div className="step-icon">{step.icon}</div>
+                <h3 className="step-title">{step.title}</h3>
+                <p className="step-description">{step.description}</p>
+              </div>
+              {index < steps.length - 1 && (
+                <div className="step-arrow">
+                  <ArrowRight size={24} />
+                </div>
+              )}
+            </React.Fragment>
           ))}
         </div>
       </section>
