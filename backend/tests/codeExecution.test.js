@@ -23,7 +23,7 @@ jest.mock('path', () => ({
 const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
-const { runCodeInDocker, cleanupTempFiles } = require('../codeExecution');
+const { runCodeInDocker, cleanupTempFiles } = require('../src/services/codeExecution');
 
 describe('Code Execution Module', () => {
   const mockExec = exec;

@@ -2,7 +2,7 @@ const request = require('supertest');
 const express = require('express');
 
 // Mock the API routes since we're testing the server setup
-jest.mock('../routes/api', () => {
+jest.mock('../src/controllers/api', () => {
   const express = require('express');
   const router = express.Router();
   router.get('/health', (req, res) => res.json({ status: 'healthy' }));
@@ -11,7 +11,7 @@ jest.mock('../routes/api', () => {
 });
 
 // Mock the server to return the app instance
-jest.mock('../server', () => {
+jest.mock('../src/server', () => {
   const express = require('express');
   const app = express();
   
@@ -19,7 +19,7 @@ jest.mock('../server', () => {
   app.use(require('cors')());
   
   // Mock the API routes
-  const mockApiRoutes = require('../routes/api');
+  const mockApiRoutes = require('../src/controllers/api');
   app.use('/api', mockApiRoutes);
   
   app.get('/', (req, res) => {
@@ -30,7 +30,7 @@ jest.mock('../server', () => {
 });
 
 // Import the server after mocking
-const server = require('../server');
+const server = require('../src/server');
 
 describe('Server Setup', () => {
   let app;
